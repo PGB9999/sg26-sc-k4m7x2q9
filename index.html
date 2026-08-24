@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0c1d36">
+<title>SGT26 Scorecard</title>
+<link rel="icon" href="icon-512.png">
+<link rel="apple-touch-icon" href="icon-512.png">
+<style>
+:root{
+  --navy:#0b1c35; --orange:#f36b18; --teal:#078b91; --cream:#f7f0df;
+  --ink:#101b2e; --line:#d9d0bd; --purple:#74439b; --yellow:#e8b600;
+}
+*{box-sizing:border-box}
+body{margin:0;background:#ece8df;color:var(--ink);font-family:Arial,Helvetica,sans-serif}
+.app{max-width:760px;margin:auto;min-height:100vh;background:var(--cream);box-shadow:0 0 30px #0002}
+.banner{display:block;width:100%;height:auto;background:#111}
+.roundbar{background:#071526;color:white;display:grid;grid-template-columns:1.25fr 1.35fr 1fr;gap:8px;padding:10px 14px;border-bottom:3px solid var(--orange);font-weight:800;font-size:13px}
+.roundbar span{opacity:.72;font-size:10px;display:block;letter-spacing:.08em;margin-bottom:2px}
+.hole{position:relative;overflow:hidden;padding:14px 14px 10px;background:
+linear-gradient(135deg,#f8f0dd 0 63%,#efe2c3 63%);border-bottom:3px solid #151515}
+.hole:before,.hole:after{content:"";position:absolute;background:#111;opacity:.06;transform:rotate(-8deg)}
+.hole:before{width:120%;height:18px;left:-10%;top:25px}.hole:after{width:100%;height:10px;left:8%;bottom:16px}
+.holegrid{position:relative;display:grid;grid-template-columns:1.2fr .72fr .72fr 1fr;align-items:center;gap:6px}
+.big7{font-size:104px;line-height:.82;font-weight:1000;color:var(--teal);font-family:Impact,Arial Black,sans-serif;transform:rotate(-4deg);text-shadow:3px 3px 0 #062e31}
+.metric{text-align:center;border-left:1px solid #0003}
+.metric b{display:block;font-family:Impact,Arial Black,sans-serif;font-size:46px;line-height:1}
+.metric small{font-weight:900;letter-spacing:.08em}
+.metric.si b{color:var(--orange)}
+.metric.yds{background:#078b9122;border:0;padding:9px 2px;transform:rotate(1deg)}
+.stable{background:#0b0b0b;color:white;text-align:center;padding:7px;font-weight:900;letter-spacing:.04em}
+.stable em{color:#3fc4c6;font-style:normal}
+.head,.player{display:grid;grid-template-columns:1.05fr 2.1fr .9fr .8fr .95fr;align-items:center;gap:7px;padding:8px 10px}
+.head{font-size:10px;font-weight:900;text-align:center;border-bottom:1px solid #0003}
+.head div:first-child{text-align:left}
+.player{min-height:78px;border-bottom:1px solid #0002}
+.name{font-family:Impact,Arial Black,sans-serif;font-size:29px;font-style:italic;letter-spacing:.02em}
+.controls{display:grid;grid-template-columns:44px 1fr 44px;gap:5px}
+button{font:inherit}
+.minus,.plus{border:0;border-radius:8px;background:var(--teal);color:white;font-size:31px;font-weight:900;box-shadow:0 2px 0 #0004;min-height:48px}
+.score{display:grid;place-items:center;background:#fffaf0;border:2px solid #202020;border-radius:8px;font-size:32px;font-weight:1000;min-height:48px}
+.shots,.pts,.total{text-align:center;font-weight:1000}
+.shots b,.pts b,.total b{display:block;font-size:28px;line-height:1}
+.total{background:#111;color:white;border-radius:8px;padding:7px 2px}
+.player[data-p="DCM"] .name,.player[data-p="DCM"] .shots b,.player[data-p="DCM"] .pts b,.player[data-p="DCM"] .total b{color:var(--orange)}
+.player[data-p="STU"] .name,.player[data-p="STU"] .shots b,.player[data-p="STU"] .pts b,.player[data-p="STU"] .total b{color:#b68b00}
+.player[data-p="GEN"] .name,.player[data-p="GEN"] .shots b,.player[data-p="GEN"] .pts b,.player[data-p="GEN"] .total b{color:var(--purple)}
+.status{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:10px 12px;background:#0a0a0a;color:white;font-weight:800;font-size:12px}
+.status strong{color:#3fc4c6}
+.nav{display:grid;grid-template-columns:1fr 1.55fr 1fr;gap:8px;padding:10px;background:#080f17;position:sticky;bottom:0}
+.nav button{border:2px solid var(--teal);background:#111923;color:white;border-radius:10px;padding:14px 5px;font-weight:1000}
+.nav .next{background:var(--teal);font-family:Impact,Arial Black,sans-serif;font-size:24px}
+.note{padding:7px 12px;font-size:11px;background:#fff4cf;color:#5b4700;text-align:center}
+@media(max-width:520px){
+ .roundbar{font-size:11px;padding:8px 9px}
+ .hole{padding:12px 8px 8px}.big7{font-size:82px}
+ .metric b{font-size:37px}.metric small{font-size:10px}
+ .head,.player{grid-template-columns:.9fr 2fr .82fr .72fr .85fr;padding-left:7px;padding-right:7px;gap:4px}
+ .name{font-size:25px}.controls{grid-template-columns:39px 1fr 39px}
+ .minus,.plus{font-size:27px}.score{font-size:29px}
+ .shots b,.pts b,.total b{font-size:24px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <img class="banner" src="sgt26-banner.png" alt="Spanish Golf Tour 2026">
+  <div class="roundbar">
+    <div><span>ROUND 1</span>LAS BRISAS · 59 TEE</div>
+    <div><span>DATE</span>SAT 29 AUG 2026</div>
+    <div><span>TEE TIME</span>TBD</div>
+  </div>
+
+  <section class="hole">
+    <div class="holegrid">
+      <div class="big7" id="holeNo">1</div>
+      <div class="metric"><small>PAR</small><b id="par">4</b></div>
+      <div class="metric si"><small>SI</small><b id="si">11</b></div>
+      <div class="metric yds"><b id="yards">—</b><small>YDS</small></div>
+    </div>
+  </section>
+
+  <div class="stable"><em>STABLEFORD</em> · 0 POINTS = PICK UP</div>
+  <div class="note">Prototype 1: Las Brisas yardages remain blank until the already-researched 59-tee distances are loaded into the backend.</div>
+
+  <div class="head"><div>PLAYER</div><div>GROSS SCORE</div><div>SHOTS</div><div>PTS</div><div>TOTAL</div></div>
+  <div id="players"></div>
+
+  <div class="status"><div>✓ <strong>AUTO SAVED</strong> · ON THIS PHONE</div><div id="best">BEST: —</div></div>
+  <div class="nav">
+    <button onclick="move(-1)">‹ PREV<br>HOLE</button>
+    <button class="next" onclick="move(1)">NEXT HOLE ›</button>
+    <button onclick="resetRound()">RESET<br>TEST</button>
+  </div>
+</div>
+
+<script>
+const players=[
+ {id:'PGB',ch:29},{id:'DCM',ch:16},{id:'STU',ch:25},{id:'GEN',ch:27}
+];
+// Par/SI data already established for Las Brisas. Metres intentionally null in Prototype 1.
+const holes=[
+[4,11,null],[4,1,null],[4,7,null],[3,13,null],[5,9,null],[4,3,null],[3,17,null],[5,5,null],[4,15,null],
+[4,6,null],[3,14,null],[5,12,null],[4,8,null],[4,2,null],[5,16,null],[3,18,null],[4,4,null],[4,10,null]
+];
+let hole=+(localStorage.sgt26Hole||1);
+let scores=JSON.parse(localStorage.sgt26Scores||'{}');
+
+function shotsOnHole(ch,si){
+  return Math.floor(ch/18)+(si <= (ch%18) ? 1 : 0);
+}
+function stableford(gross,par,shots){
+  if(!gross) return null;
+  return Math.max(0, 2 + par + shots - gross);
+}
+function totalFor(pid){
+  let t=0;
+  for(let h=1;h<=18;h++){
+    const gross=scores[pid]?.[h];
+    if(gross){
+      const [par,si]=holes[h-1];
+      const p=players.find(x=>x.id===pid);
+      t+=stableford(gross,par,shotsOnHole(p.ch,si));
+    }
+  }
+  return t;
+}
+function save(){
+  localStorage.sgt26Scores=JSON.stringify(scores);
+  localStorage.sgt26Hole=hole;
+}
+function render(){
+  const [par,si,m]=holes[hole-1];
+  document.getElementById('holeNo').textContent=hole;
+  document.getElementById('par').textContent=par;
+  document.getElementById('si').textContent=si;
+  document.getElementById('yards').textContent=m?Math.round(m*1.09361):'—';
+  const wrap=document.getElementById('players'); wrap.innerHTML='';
+  let bestPts=-1,best=[];
+  players.forEach(p=>{
+    const gross=scores[p.id]?.[hole]||0;
+    const sh=shotsOnHole(p.ch,si);
+    const pts=stableford(gross,par,sh);
+    if(pts!==null){if(pts>bestPts){bestPts=pts;best=[p.id]}else if(pts===bestPts)best.push(p.id)}
+    const row=document.createElement('div'); row.className='player'; row.dataset.p=p.id;
+    row.innerHTML=`<div class="name">${p.id}</div>
+      <div class="controls"><button class="minus" onclick="bump('${p.id}',-1)">−</button>
+      <div class="score">${gross||'–'}</div><button class="plus" onclick="bump('${p.id}',1)">+</button></div>
+      <div class="shots"><b>${sh}</b>${sh===1?'SHOT':'SHOTS'}</div>
+      <div class="pts"><b>${pts===null?'–':pts}</b>PTS</div>
+      <div class="total"><b>${totalFor(p.id)}</b>PTS</div>`;
+    wrap.appendChild(row);
+  });
+  document.getElementById('best').textContent=bestPts>=0?`BEST: ${best.join(' / ')} · ${bestPts} PTS`:'BEST: —';
+}
+function bump(pid,d){
+  scores[pid]??={};
+  let n=scores[pid][hole]||0;
+  n=Math.max(0,Math.min(15,n+d));
+  if(n===0) delete scores[pid][hole]; else scores[pid][hole]=n;
+  save();render();
+}
+function move(d){hole=Math.max(1,Math.min(18,hole+d));save();render();window.scrollTo({top:0,behavior:'smooth'})}
+function resetRound(){if(confirm('Clear all prototype scores on this phone?')){scores={};hole=1;save();render()}}
+render();
+</script>
+</body>
+</html>
