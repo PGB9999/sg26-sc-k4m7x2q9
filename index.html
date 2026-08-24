@@ -33,7 +33,7 @@ body{min-height:100vh}
   display:block;
   width:100%;
   height:auto;
-  aspect-ratio: 3.65 / 1;
+  aspect-ratio: 4.35 / 1;
   object-fit:cover;
   background:#111;
 }
@@ -47,7 +47,7 @@ body{min-height:100vh}
   border-bottom:2px solid var(--orange);
 }
 .roundbar>div{
-  padding:7px 8px 6px;
+  padding:5px 7px 5px;
   font-size:13px;
   font-weight:900;
   line-height:1.15;
@@ -68,7 +68,7 @@ body{min-height:100vh}
 .holegrid{
   display:grid;
   grid-template-columns:23% 1fr 1fr 1.2fr;
-  min-height:104px;
+  min-height:88px;
   align-items:stretch;
 }
 .big7{
@@ -76,7 +76,7 @@ body{min-height:100vh}
   align-items:center;
   justify-content:center;
   color:white;
-  font-size:62px;
+  font-size:54px;
   line-height:1;
   font-weight:1000;
   font-family:Impact,Arial Black,sans-serif;
@@ -89,7 +89,7 @@ body{min-height:100vh}
   font-size:11px;
   font-weight:900;
   letter-spacing:.05em;
-  transform:translateY(-37px);
+  transform:translateY(-31px);
 }
 .metric{
   display:flex;
@@ -102,26 +102,26 @@ body{min-height:100vh}
 .metric b{
   display:block;
   font-family:Impact,Arial Black,sans-serif;
-  font-size:40px;
+  font-size:35px;
   line-height:.9;
 }
 .metric small{
   font-weight:900;
   font-size:11px;
   letter-spacing:.08em;
-  margin-bottom:5px;
+  margin-bottom:3px;
 }
 .metric.si b{color:var(--orange)}
 .metric.yds{
   border-left:1px solid #0002;
-  margin:7px 8px 7px 0;
+  margin:5px 6px 5px 0;
   background:#dfe7d7;
 }
 .stable{
   background:#050505;
   color:white;
   text-align:center;
-  padding:6px 10px;
+  padding:5px 8px;
   font-weight:900;
   letter-spacing:.03em;
   font-size:15px;
@@ -142,7 +142,7 @@ body{min-height:100vh}
   align-items:center;
 }
 .head{
-  min-height:34px;
+  min-height:30px;
   padding:0 8px;
   font-size:9px;
   font-weight:900;
@@ -151,8 +151,8 @@ body{min-height:100vh}
 }
 .head div:first-child{text-align:left}
 .player{
-  min-height:70px;
-  padding:4px 8px;
+  min-height:62px;
+  padding:3px 7px;
   border-bottom:1px solid #0002;
 }
 .name{
@@ -203,7 +203,7 @@ button{font:inherit}
   background:#0a0a0a;
   color:white;
   border-radius:7px;
-  padding:6px 2px;
+  padding:5px 2px;
 }
 .player[data-p="DCM"] .name,.player[data-p="DCM"] .shots b,.player[data-p="DCM"] .pts b,.player[data-p="DCM"] .total b{color:var(--orange)}
 .player[data-p="STU"] .name,.player[data-p="STU"] .shots b,.player[data-p="STU"] .pts b,.player[data-p="STU"] .total b{color:var(--yellow)}
@@ -213,8 +213,8 @@ button{font:inherit}
   justify-content:space-between;
   align-items:center;
   gap:8px;
-  min-height:34px;
-  padding:6px 10px;
+  min-height:30px;
+  padding:5px 8px;
   background:#050505;
   color:white;
   font-weight:800;
@@ -225,14 +225,14 @@ button{font:inherit}
   display:grid;
   grid-template-columns:1fr 1.45fr 1fr;
   gap:8px;
-  padding:6px 10px calc(6px + env(safe-area-inset-bottom));
+  padding:5px 8px calc(5px + env(safe-area-inset-bottom));
   background:linear-gradient(180deg,#06101d,#081625);
   position:sticky;
   bottom:0;
   z-index:5;
 }
 .nav button{
-  min-height:56px;
+  min-height:52px;
   border:1.5px solid var(--teal);
   background:#0a1726;
   color:white;
@@ -252,9 +252,9 @@ button{font:inherit}
 }
 @media (max-width:390px){
   .roundbar>div{font-size:11px;padding-left:6px;padding-right:6px}
-  .holegrid{min-height:100px}
-  .big7{font-size:58px}
-  .metric b{font-size:36px}
+  .holegrid{min-height:86px}
+  .big7{font-size:52px}
+  .metric b{font-size:33px}
   .name{font-size:25px}
   .controls{grid-template-columns:40px minmax(48px,1fr) 40px}
   .minus,.plus,.score{min-height:46px}
