@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- SGT26_BUILD:1.5.4 -->
+<!-- SGT26_BUILD:1.6D -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -368,17 +368,17 @@ button{font:inherit}
 
 </style>
 <script>
-  const APP_VERSION = "1.5.4";
+  const APP_VERSION = "1.6D";
   console.info("SGT26 Scorecard", APP_VERSION);
 </script>
 </head>
 <body>
 <div class="app">
-  <img class="banner" src="sgt26-banner.png?v=1.5.4" alt="Spanish Golf Tour 2026">
+  <img class="banner" src="sgt26-banner.png?v=1.6D" alt="Spanish Golf Tour 2026">
   <div class="roundbar">
-    <div><span>ROUND 1</span>LAS BRISAS · 59 TEE</div>
-    <div><span>DATE</span>SAT 29 AUG 2026</div>
-    <div><span>TEE TIME</span>TBD</div>
+    <div><span id="roundLabel">ROUND 1</span><span id="courseTee" style="display:inline;opacity:1;font-size:inherit;letter-spacing:0;margin:0">LAS BRISAS · 59 TEE</span></div>
+    <div><span>DATE</span><span id="roundDate" style="display:inline;opacity:1;font-size:inherit;letter-spacing:0;margin:0">SAT 29 AUG 2026</span></div>
+    <div><span>TEE TIME</span><span id="teeTime" style="display:inline;opacity:1;font-size:inherit;letter-spacing:0;margin:0">TBD</span></div>
   </div>
 
   <section class="hole">
@@ -403,54 +403,97 @@ button{font:inherit}
 </div>
 
 <script>
-const players=[
- {id:'PGB',ch:29},{id:'DCM',ch:16},{id:'STU',ch:25},{id:'GEN',ch:27}
-];
-// Par/SI data already established for Las Brisas. Metres intentionally null in Prototype 1.
-const holes=[
-[4,11,null],[4,1,null],[4,7,null],[3,13,null],[5,9,null],[4,3,null],[3,17,null],[5,5,null],[4,15,null],
-[4,6,null],[3,14,null],[5,12,null],[4,8,null],[4,2,null],[5,16,null],[3,18,null],[4,4,null],[4,10,null]
-];
-let hole=+(localStorage.sgt26Hole||1);
-let scores=JSON.parse(localStorage.sgt26Scores||'{}');
+const DATA_ENDPOINT = "https://script.google.com/macros/s/AKfycbz06cod2GzirOUT7HCyMLgzF9RLJE8psZQqEQFSzrKut3fYMGVsRicuEutsFabVNelm/exec";
+const ROUND_NUMBER = 1;
+
+let players = [];
+let holes = [];
+let roundData = null;
+
+let hole = +(localStorage.sgt26Hole || 1);
+let scores = JSON.parse(localStorage.sgt26Scores || '{}');
 
 function shotsOnHole(ch,si){
   return Math.floor(ch/18)+(si <= (ch%18) ? 1 : 0);
 }
+
 function stableford(gross,par,shots){
   if(!gross) return null;
   return Math.max(0, 2 + par + shots - gross);
 }
+
 function totalFor(pid){
   let t=0;
   for(let h=1;h<=18;h++){
     const gross=scores[pid]?.[h];
-    if(gross){
-      const [par,si]=holes[h-1];
+    if(gross && holes[h-1]){
+      const current=holes[h-1];
       const p=players.find(x=>x.id===pid);
-      t+=stableford(gross,par,shotsOnHole(p.ch,si));
+      if(p) t+=stableford(gross,current.par,shotsOnHole(p.ch,current.si));
     }
   }
   return t;
 }
+
 function save(){
   localStorage.sgt26Scores=JSON.stringify(scores);
   localStorage.sgt26Hole=hole;
 }
+
+function formatRoundDate(value){
+  const m=String(value||'').match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+  if(!m) return String(value||'').toUpperCase();
+  const d=new Date(Number(m[3]),Number(m[2])-1,Number(m[1]));
+  return new Intl.DateTimeFormat('en-GB',{weekday:'short',day:'2-digit',month:'short',year:'numeric'})
+    .format(d).toUpperCase().replace(',','');
+}
+
+function renderRoundMeta(){
+  if(!roundData) return;
+  document.getElementById('roundLabel').textContent=`ROUND ${roundData.round}`;
+  document.getElementById('courseTee').textContent=
+    `${String(roundData.course||'').toUpperCase()} · ${String(roundData.tee||'').toUpperCase()} TEE`;
+  document.getElementById('roundDate').textContent=formatRoundDate(roundData.date);
+  document.getElementById('teeTime').textContent=String(roundData.teeTime||'TBD').toUpperCase();
+}
+
 function render(){
-  const [par,si,m]=holes[hole-1];
-  document.getElementById('holeNo').textContent=hole;
+  if(!holes.length || !players.length) return;
+
+  hole=Math.max(1,Math.min(holes.length,hole));
+  const current=holes[hole-1];
+  const par=current.par;
+  const si=current.si;
+
+  document.getElementById('holeNo').textContent=current.hole;
   document.getElementById('par').textContent=par;
   document.getElementById('si').textContent=si;
-  document.getElementById('yards').textContent=m?Math.round(m*1.09361):'—';
-  const wrap=document.getElementById('players'); wrap.innerHTML='';
+  const displayYards =
+    Number.isFinite(current.yards) && current.yards > 0
+      ? current.yards
+      : (Number.isFinite(current.metres) && current.metres > 0
+          ? Math.round(current.metres * 1.09361)
+          : '—');
+  document.getElementById('yards').textContent=displayYards;
+
+  const wrap=document.getElementById('players');
+  wrap.innerHTML='';
+
   let bestPts=-1,best=[];
+
   players.forEach(p=>{
     const gross=scores[p.id]?.[hole]||0;
     const sh=shotsOnHole(p.ch,si);
     const pts=stableford(gross,par,sh);
-    if(pts!==null){if(pts>bestPts){bestPts=pts;best=[p.id]}else if(pts===bestPts)best.push(p.id)}
-    const row=document.createElement('div'); row.className='player'; row.dataset.p=p.id;
+
+    if(pts!==null){
+      if(pts>bestPts){bestPts=pts;best=[p.id]}
+      else if(pts===bestPts) best.push(p.id);
+    }
+
+    const row=document.createElement('div');
+    row.className='player';
+    row.dataset.p=p.id;
     row.innerHTML=`<div class="name">${p.id}</div>
       <div class="controls"><button class="minus" onclick="bump('${p.id}',-1)">−</button>
       <div class="score">${gross||'–'}</div><button class="plus" onclick="bump('${p.id}',1)">+</button></div>
@@ -459,18 +502,102 @@ function render(){
       <div class="total"><b>${totalFor(p.id)}</b>PTS</div>`;
     wrap.appendChild(row);
   });
-  document.getElementById('best').textContent=bestPts>=0?`BEST: ${best.join(' / ')} · ${bestPts} PTS`:'BEST: —';
+
+  document.getElementById('best').textContent=
+    bestPts>=0?`BEST: ${best.join(' / ')} · ${bestPts} PTS`:'BEST: —';
 }
+
 function bump(pid,d){
   scores[pid]??={};
   let n=scores[pid][hole]||0;
   n=Math.max(0,Math.min(15,n+d));
-  if(n===0) delete scores[pid][hole]; else scores[pid][hole]=n;
-  save();render();
+  if(n===0) delete scores[pid][hole];
+  else scores[pid][hole]=n;
+  save();
+  render();
 }
-function move(d){hole=Math.max(1,Math.min(18,hole+d));save();render();window.scrollTo({top:0,behavior:'smooth'})}
-function resetRound(){if(confirm('Clear all prototype scores on this phone?')){scores={};hole=1;save();render()}}
-render();
+
+function move(d){
+  if(!holes.length) return;
+  hole=Math.max(1,Math.min(holes.length,hole+d));
+  save();
+  render();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function resetRound(){
+  if(confirm('Clear all prototype scores on this phone?')){
+    scores={};
+    hole=1;
+    save();
+    render();
+  }
+}
+
+function applyRoundPayload(payload){
+  if(!payload || !payload.ok || !payload.data){
+    throw new Error(payload?.error || 'Invalid round-data response.');
+  }
+
+  roundData=payload.data.round;
+  players=payload.data.players.map(p=>({id:String(p.player),ch:Number(p.playingHandicap)}));
+  holes=payload.data.holes.map(h=>({
+    hole:Number(h.hole),
+    par:Number(h.par),
+    si:Number(h.si),
+    metres:Number(h.metres),
+    yards:Number(h.yards)
+  }));
+
+  if(holes.length!==18) throw new Error(`Expected 18 holes, received ${holes.length}.`);
+
+  renderRoundMeta();
+  render();
+}
+
+function loadRoundData(){
+  return new Promise((resolve,reject)=>{
+    const callbackName=`sgt26RoundCallback_${Date.now()}`;
+    const script=document.createElement('script');
+
+    const cleanup=()=>{
+      try{ delete window[callbackName]; }catch(_){}
+      script.remove();
+    };
+
+    const timer=setTimeout(()=>{
+      cleanup();
+      reject(new Error('Round data timed out.'));
+    },15000);
+
+    window[callbackName]=payload=>{
+      clearTimeout(timer);
+      cleanup();
+      try{
+        applyRoundPayload(payload);
+        resolve();
+      }catch(error){
+        reject(error);
+      }
+    };
+
+    script.onerror=()=>{
+      clearTimeout(timer);
+      cleanup();
+      reject(new Error('Unable to load round data.'));
+    };
+
+    script.src=
+      `${DATA_ENDPOINT}?round=${ROUND_NUMBER}&callback=${encodeURIComponent(callbackName)}&v=${encodeURIComponent(APP_VERSION)}`;
+
+    document.head.appendChild(script);
+  });
+}
+
+loadRoundData().catch(error=>{
+  console.error('SGT26 round-data load failed:',error);
+  document.getElementById('best').textContent='DATA ERROR';
+});
 </script>
 </body>
 </html>
