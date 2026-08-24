@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- SGT26_BUILD:1.5.1 -->
+<!-- SGT26_BUILD:1.5.2 -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -290,22 +290,31 @@ button{font:inherit}
 @media (max-width:390px){
   .roundbar>div{font-size:11px;padding-left:6px;padding-right:6px}
   .holegrid{min-height:100%}
-  .big7{font-size:clamp(46px, 7dvh, 60px)}
+  .big7{font-size:clamp(40px, 6.2dvh, 58px); line-height:.88}
   .metric b{font-size:clamp(30px, 4.8dvh, 40px)}
   .name{font-size:25px}
   .controls{grid-template-columns:40px minmax(48px,1fr) 40px}
   .minus,.plus,.score{min-height:46px}
   .shots b,.pts b,.total b{font-size:24px}
 }
+
+/* 1.5.2 — Hole number scales down as usable screen height shrinks. */
+@media (max-height: 850px){
+  .big7{font-size:clamp(38px, 5.8dvh, 50px); line-height:.86}
+}
+@media (max-height: 740px){
+  .big7{font-size:clamp(34px, 5.2dvh, 44px); line-height:.84}
+}
+
 </style>
 <script>
-  const APP_VERSION = "1.5.1";
+  const APP_VERSION = "1.5.2";
   console.info("SGT26 Scorecard", APP_VERSION);
 </script>
 </head>
 <body>
 <div class="app">
-  <img class="banner" src="sgt26-banner.png?v=1.5.1" alt="Spanish Golf Tour 2026">
+  <img class="banner" src="sgt26-banner.png?v=1.5.2" alt="Spanish Golf Tour 2026">
   <div class="roundbar">
     <div><span>ROUND 1</span>LAS BRISAS · 59 TEE</div>
     <div><span>DATE</span>SAT 29 AUG 2026</div>
