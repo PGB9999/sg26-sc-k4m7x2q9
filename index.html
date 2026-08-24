@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- SGT26_BUILD:RyderCup2018.8 -->
+<!-- SGT26_BUILD:RyderCup2018.9 -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -401,15 +401,24 @@ button{font:inherit}
   text-decoration:none;
 }
 
+
+/* RyderCup2018.9 — central score loading state */
+.score-loading .minus,
+.score-loading .plus{
+  opacity:.45;
+  pointer-events:none;
+  filter:grayscale(.35);
+}
+
 </style>
 <script>
-  const APP_VERSION = "RyderCup2018.8";
+  const APP_VERSION = "RyderCup2018.9";
   console.info("SGT26 Scorecard", APP_VERSION);
 </script>
 </head>
 <body>
 <div class="app">
-  <img class="banner" src="sgt26-banner.png?v=RyderCup2018.8" alt="Spanish Golf Tour 2026">
+  <img class="banner" src="sgt26-banner.png?v=RyderCup2018.9" alt="Spanish Golf Tour 2026">
   <div class="roundbar">
     <div>
       <span id="roundLabel">ROUND 1</span>
@@ -556,6 +565,7 @@ function render(){
 }
 
 function bump(pid,d){
+  if(document.body.classList.contains('score-loading')) return;
   scores[pid]??={};
   let n=scores[pid][hole]||0;
   n=Math.max(0,Math.min(15,n+d));
@@ -640,6 +650,13 @@ function setSaveStatus(text,isError=false){
   status.style.color=isError ? '#f36b18' : '';
 }
 
+function setScoreLoading(isLoading){
+  document.body.classList.toggle('score-loading',isLoading);
+  if(isLoading){
+    setSaveStatus('LOADING SCORES…');
+  }
+}
+
 function applyCentralScores(savedScores){
   if(!Array.isArray(savedScores)) return;
 
@@ -660,6 +677,8 @@ function applyCentralScores(savedScores){
 }
 
 function loadCentralScores(){
+  setScoreLoading(true);
+
   return apiJsonp({
     service:'scorecards',
     action:'scores',
@@ -667,7 +686,13 @@ function loadCentralScores(){
   }).then(saved=>{
     applyCentralScores(saved);
     render();
+    setScoreLoading(false);
     setSaveStatus('AUTO SAVED');
+  }).catch(error=>{
+    setScoreLoading(false);
+    console.error('Central score load failed:',error);
+    setSaveStatus('LOCAL ONLY',true);
+    throw error;
   });
 }
 
@@ -762,6 +787,7 @@ function switchRound(roundNumber){
   scores=JSON.parse(localStorage.getItem(scoreStorageKey()) || '{}');
 
   document.getElementById('best').textContent='LOADING…';
+  setScoreLoading(true);
 
   loadRoundData()
     .then(()=>loadCentralScores())
@@ -781,6 +807,7 @@ document.getElementById('roundSelect').addEventListener('change',e=>{
 document.querySelector('.status').addEventListener('dblclick',resetRound);
 
 document.getElementById('roundSelect').value=String(currentRound);
+setScoreLoading(true);
 
 loadRoundData()
   .then(()=>loadCentralScores())
@@ -789,7 +816,7 @@ loadRoundData()
     document.getElementById('best').textContent='DATA ERROR';
     setSaveStatus('LOCAL ONLY',true);
   });
-// RyderCup2018.8 central score load/save enabled
+// RyderCup2018.9 central score loading state enabled
 </script>
 </body>
 </html>
