@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- SGT26_BUILD:RyderCup2018.6 -->
+<!-- SGT26_BUILD:RyderCup2018.8 -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -403,13 +403,13 @@ button{font:inherit}
 
 </style>
 <script>
-  const APP_VERSION = "RyderCup2018.6";
+  const APP_VERSION = "RyderCup2018.8";
   console.info("SGT26 Scorecard", APP_VERSION);
 </script>
 </head>
 <body>
 <div class="app">
-  <img class="banner" src="sgt26-banner.png?v=RyderCup2018.6" alt="Spanish Golf Tour 2026">
+  <img class="banner" src="sgt26-banner.png?v=RyderCup2018.8" alt="Spanish Golf Tour 2026">
   <div class="roundbar">
     <div>
       <span id="roundLabel">ROUND 1</span>
@@ -559,10 +559,18 @@ function bump(pid,d){
   scores[pid]??={};
   let n=scores[pid][hole]||0;
   n=Math.max(0,Math.min(15,n+d));
+
   if(n===0) delete scores[pid][hole];
   else scores[pid][hole]=n;
+
+  const holeToSave=hole;
+  const grossToSave=n;
+
   save();
   render();
+
+  saveCentralScore(pid,holeToSave,grossToSave)
+    .catch(()=>{});
 }
 
 function move(d){
@@ -574,12 +582,112 @@ function move(d){
 }
 
 function resetRound(){
-  if(confirm('Clear all prototype scores on this phone?')){
+  if(confirm('Clear local cached scores on this phone? Central saved scores will remain.')){
     scores={};
     hole=1;
     save();
     render();
   }
+}
+
+
+function apiJsonp(params){
+  return new Promise((resolve,reject)=>{
+    const callbackName=`sgt26Api_${Date.now()}_${Math.floor(Math.random()*100000)}`;
+    const script=document.createElement('script');
+
+    const cleanup=()=>{
+      try{ delete window[callbackName]; }catch(_){}
+      script.remove();
+    };
+
+    const timer=setTimeout(()=>{
+      cleanup();
+      reject(new Error('Backend request timed out.'));
+    },15000);
+
+    window[callbackName]=payload=>{
+      clearTimeout(timer);
+      cleanup();
+      if(!payload || payload.ok===false){
+        reject(new Error(payload?.error || 'Backend request failed.'));
+        return;
+      }
+      resolve(payload.data);
+    };
+
+    script.onerror=()=>{
+      clearTimeout(timer);
+      cleanup();
+      reject(new Error('Unable to contact backend.'));
+    };
+
+    const query=new URLSearchParams({
+      ...params,
+      callback:callbackName,
+      v:APP_VERSION
+    });
+
+    script.src=`${DATA_ENDPOINT}?${query.toString()}`;
+    document.head.appendChild(script);
+  });
+}
+
+function setSaveStatus(text,isError=false){
+  const status=document.querySelector('.status strong');
+  if(!status) return;
+  status.textContent=text;
+  status.style.color=isError ? '#f36b18' : '';
+}
+
+function applyCentralScores(savedScores){
+  if(!Array.isArray(savedScores)) return;
+
+  const roundKey=currentRound;
+
+  savedScores.forEach(item=>{
+    const pid=String(item.player||'').toUpperCase();
+    const h=Number(item.hole);
+    const gross=Number(item.gross);
+
+    if(!pid || !h || !gross) return;
+
+    scores[pid]??={};
+    scores[pid][h]=gross;
+  });
+
+  save();
+}
+
+function loadCentralScores(){
+  return apiJsonp({
+    service:'scorecards',
+    action:'scores',
+    round:currentRound
+  }).then(saved=>{
+    applyCentralScores(saved);
+    render();
+    setSaveStatus('AUTO SAVED');
+  });
+}
+
+function saveCentralScore(pid,holeNumber,gross){
+  setSaveStatus('SAVING…');
+
+  return apiJsonp({
+    service:'scorecards',
+    action:'saveScore',
+    round:currentRound,
+    hole:holeNumber,
+    player:pid,
+    gross:gross
+  }).then(()=>{
+    setSaveStatus('AUTO SAVED');
+  }).catch(error=>{
+    console.error('Central score save failed:',error);
+    setSaveStatus('LOCAL ONLY',true);
+    throw error;
+  });
 }
 
 function applyRoundPayload(payload){
@@ -656,6 +764,7 @@ function switchRound(roundNumber){
   document.getElementById('best').textContent='LOADING…';
 
   loadRoundData()
+    .then(()=>loadCentralScores())
     .then(()=>window.scrollTo({top:0,behavior:'smooth'}))
     .catch(error=>{
       console.error('SGT26 round switch failed:',error);
@@ -673,10 +782,14 @@ document.querySelector('.status').addEventListener('dblclick',resetRound);
 
 document.getElementById('roundSelect').value=String(currentRound);
 
-loadRoundData().catch(error=>{
-  console.error('SGT26 round-data load failed:',error);
-  document.getElementById('best').textContent='DATA ERROR';
-});
+loadRoundData()
+  .then(()=>loadCentralScores())
+  .catch(error=>{
+    console.error('SGT26 initial load failed:',error);
+    document.getElementById('best').textContent='DATA ERROR';
+    setSaveStatus('LOCAL ONLY',true);
+  });
+// RyderCup2018.8 central score load/save enabled
 </script>
 </body>
 </html>
