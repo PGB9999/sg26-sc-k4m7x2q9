@@ -33,7 +33,7 @@ body{min-height:100vh}
   display:block;
   width:100%;
   height:auto;
-  aspect-ratio: 2.95 / 1;
+  aspect-ratio: 3.65 / 1;
   object-fit:cover;
   background:#111;
 }
@@ -47,7 +47,7 @@ body{min-height:100vh}
   border-bottom:2px solid var(--orange);
 }
 .roundbar>div{
-  padding:10px 8px 9px;
+  padding:7px 8px 6px;
   font-size:13px;
   font-weight:900;
   line-height:1.15;
@@ -68,7 +68,7 @@ body{min-height:100vh}
 .holegrid{
   display:grid;
   grid-template-columns:23% 1fr 1fr 1.2fr;
-  min-height:132px;
+  min-height:104px;
   align-items:stretch;
 }
 .big7{
@@ -76,7 +76,7 @@ body{min-height:100vh}
   align-items:center;
   justify-content:center;
   color:white;
-  font-size:74px;
+  font-size:62px;
   line-height:1;
   font-weight:1000;
   font-family:Impact,Arial Black,sans-serif;
@@ -89,7 +89,7 @@ body{min-height:100vh}
   font-size:11px;
   font-weight:900;
   letter-spacing:.05em;
-  transform:translateY(-46px);
+  transform:translateY(-37px);
 }
 .metric{
   display:flex;
@@ -102,26 +102,26 @@ body{min-height:100vh}
 .metric b{
   display:block;
   font-family:Impact,Arial Black,sans-serif;
-  font-size:46px;
+  font-size:40px;
   line-height:.9;
 }
 .metric small{
   font-weight:900;
   font-size:11px;
   letter-spacing:.08em;
-  margin-bottom:8px;
+  margin-bottom:5px;
 }
 .metric.si b{color:var(--orange)}
 .metric.yds{
   border-left:1px solid #0002;
-  margin:10px 10px 10px 0;
+  margin:7px 8px 7px 0;
   background:#dfe7d7;
 }
 .stable{
   background:#050505;
   color:white;
   text-align:center;
-  padding:8px 10px;
+  padding:6px 10px;
   font-weight:900;
   letter-spacing:.03em;
   font-size:15px;
@@ -142,7 +142,7 @@ body{min-height:100vh}
   align-items:center;
 }
 .head{
-  min-height:42px;
+  min-height:34px;
   padding:0 8px;
   font-size:9px;
   font-weight:900;
@@ -151,8 +151,8 @@ body{min-height:100vh}
 }
 .head div:first-child{text-align:left}
 .player{
-  min-height:82px;
-  padding:7px 8px;
+  min-height:70px;
+  padding:4px 8px;
   border-bottom:1px solid #0002;
 }
 .name{
@@ -174,7 +174,7 @@ button{font:inherit}
   color:white;
   font-size:28px;
   font-weight:900;
-  min-height:50px;
+  min-height:48px;
   box-shadow:0 2px 0 #0003;
 }
 .score{
@@ -185,7 +185,7 @@ button{font:inherit}
   border-radius:7px;
   font-size:30px;
   font-weight:1000;
-  min-height:50px;
+  min-height:48px;
 }
 .shots,.pts,.total{
   text-align:center;
@@ -203,7 +203,7 @@ button{font:inherit}
   background:#0a0a0a;
   color:white;
   border-radius:7px;
-  padding:8px 2px;
+  padding:6px 2px;
 }
 .player[data-p="DCM"] .name,.player[data-p="DCM"] .shots b,.player[data-p="DCM"] .pts b,.player[data-p="DCM"] .total b{color:var(--orange)}
 .player[data-p="STU"] .name,.player[data-p="STU"] .shots b,.player[data-p="STU"] .pts b,.player[data-p="STU"] .total b{color:var(--yellow)}
@@ -213,8 +213,8 @@ button{font:inherit}
   justify-content:space-between;
   align-items:center;
   gap:8px;
-  min-height:42px;
-  padding:8px 10px;
+  min-height:34px;
+  padding:6px 10px;
   background:#050505;
   color:white;
   font-weight:800;
@@ -225,14 +225,14 @@ button{font:inherit}
   display:grid;
   grid-template-columns:1fr 1.45fr 1fr;
   gap:8px;
-  padding:8px 10px calc(8px + env(safe-area-inset-bottom));
+  padding:6px 10px calc(6px + env(safe-area-inset-bottom));
   background:linear-gradient(180deg,#06101d,#081625);
   position:sticky;
   bottom:0;
   z-index:5;
 }
 .nav button{
-  min-height:64px;
+  min-height:56px;
   border:1.5px solid var(--teal);
   background:#0a1726;
   color:white;
@@ -252,9 +252,9 @@ button{font:inherit}
 }
 @media (max-width:390px){
   .roundbar>div{font-size:11px;padding-left:6px;padding-right:6px}
-  .holegrid{min-height:120px}
-  .big7{font-size:66px}
-  .metric b{font-size:40px}
+  .holegrid{min-height:100px}
+  .big7{font-size:58px}
+  .metric b{font-size:36px}
   .name{font-size:25px}
   .controls{grid-template-columns:40px minmax(48px,1fr) 40px}
   .minus,.plus,.score{min-height:46px}
@@ -281,9 +281,7 @@ button{font:inherit}
   </section>
 
   <div class="stable"><em>STABLEFORD</em> · 0 POINTS = PICK UP</div>
-  <div class="note">Prototype 1: Las Brisas yardages remain blank until the already-researched 59-tee distances are loaded into the backend.</div>
-
-  <div class="head"><div>PLAYER</div><div>GROSS SCORE</div><div>SHOTS</div><div>PTS</div><div>TOTAL</div></div>
+<div class="head"><div>PLAYER</div><div>GROSS SCORE</div><div>SHOTS</div><div>PTS</div><div>TOTAL</div></div>
   <div id="players"></div>
 
   <div class="status"><div>✓ <strong>AUTO SAVED</strong> · ON THIS PHONE</div><div id="best">BEST: —</div></div>
