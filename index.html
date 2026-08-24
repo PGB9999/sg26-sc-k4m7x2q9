@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- SGT26_BUILD:RyderCup2018.9 -->
+<!-- SGT26_BUILD:RyderCup2018.10 -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -410,15 +410,26 @@ button{font:inherit}
   filter:grayscale(.35);
 }
 
+
+/* RyderCup2018.10 — allow long course names to use two lines */
+.course .value,
+#roundSelect{
+  white-space:normal;
+  line-height:1.08;
+}
+#roundSelect{
+  max-width:100%;
+}
+
 </style>
 <script>
-  const APP_VERSION = "RyderCup2018.9";
+  const APP_VERSION = "RyderCup2018.10";
   console.info("SGT26 Scorecard", APP_VERSION);
 </script>
 </head>
 <body>
 <div class="app">
-  <img class="banner" src="sgt26-banner.png?v=RyderCup2018.9" alt="Spanish Golf Tour 2026">
+  <img class="banner" src="sgt26-banner.png?v=RyderCup2018.10" alt="Spanish Golf Tour 2026">
   <div class="roundbar">
     <div>
       <span id="roundLabel">ROUND 1</span>
@@ -816,7 +827,7 @@ loadRoundData()
     document.getElementById('best').textContent='DATA ERROR';
     setSaveStatus('LOCAL ONLY',true);
   });
-// RyderCup2018.9 central score loading state enabled
+// RyderCup2018.10 course-name wrapping enabled
 </script>
 </body>
 </html>
