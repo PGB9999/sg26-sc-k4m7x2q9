@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- SGT26_BUILD:1.6D -->
+<!-- SGT26_BUILD:1.7.0 -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -366,17 +366,62 @@ button{font:inherit}
   }
 }
 
+
+/* 1.7.0 — round selector + expenses link */
+.roundSelect{
+  width:100%;
+  background:transparent;
+  color:#fff;
+  border:0;
+  outline:0;
+  padding:0;
+  margin:0;
+  font:inherit;
+  font-weight:900;
+  text-transform:uppercase;
+  appearance:auto;
+}
+.roundSelect option{
+  color:#111;
+  background:#fff;
+  text-transform:none;
+}
+.expensesLink{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:var(--nav-h);
+  border:1.5px solid var(--orange);
+  background:#16110c;
+  color:#fff;
+  border-radius:9px;
+  padding:8px 4px;
+  font-weight:1000;
+  font-size:13px;
+  text-decoration:none;
+}
+
 </style>
 <script>
-  const APP_VERSION = "1.6D";
+  const APP_VERSION = "1.7.0";
   console.info("SGT26 Scorecard", APP_VERSION);
 </script>
 </head>
 <body>
 <div class="app">
-  <img class="banner" src="sgt26-banner.png?v=1.6D" alt="Spanish Golf Tour 2026">
+  <img class="banner" src="sgt26-banner.png?v=1.7.0" alt="Spanish Golf Tour 2026">
   <div class="roundbar">
-    <div><span id="roundLabel">ROUND 1</span><span id="courseTee" style="display:inline;opacity:1;font-size:inherit;letter-spacing:0;margin:0">LAS BRISAS · 59 TEE</span></div>
+    <div>
+      <span id="roundLabel">ROUND 1</span>
+      <select id="roundSelect" class="roundSelect" aria-label="Choose round">
+        <option value="1">LAS BRISAS · 59 TEE</option>
+        <option value="2">LOS ARQUEROS · YELLOW TEE</option>
+        <option value="3">ATALAYA NEW · YELLOW TEE</option>
+        <option value="4">SANTA CLARA · YELLOW TEE</option>
+        <option value="5">MARBELLA · EQUIVALENT TEE</option>
+        <option value="6">SANTANA · YELLOW TEE</option>
+      </select>
+    </div>
     <div><span>DATE</span><span id="roundDate" style="display:inline;opacity:1;font-size:inherit;letter-spacing:0;margin:0">SAT 29 AUG 2026</span></div>
     <div><span>TEE TIME</span><span id="teeTime" style="display:inline;opacity:1;font-size:inherit;letter-spacing:0;margin:0">TBD</span></div>
   </div>
@@ -398,20 +443,23 @@ button{font:inherit}
   <div class="nav">
     <button onclick="move(-1)">‹ PREV<br>HOLE</button>
     <button class="next" onclick="move(1)">NEXT HOLE ›</button>
-    <button onclick="resetRound()">RESET<br>TEST</button>
+    <a class="expensesLink" href="https://pgb9999.github.io/sg26-k7m4x9q2/">EXPENSES<br>€</a>
   </div>
 </div>
 
 <script>
 const DATA_ENDPOINT = "https://script.google.com/macros/s/AKfycbz06cod2GzirOUT7HCyMLgzF9RLJE8psZQqEQFSzrKut3fYMGVsRicuEutsFabVNelm/exec";
-const ROUND_NUMBER = 1;
+let currentRound = +(localStorage.sgt26Round || 1);
 
 let players = [];
 let holes = [];
 let roundData = null;
 
-let hole = +(localStorage.sgt26Hole || 1);
-let scores = JSON.parse(localStorage.sgt26Scores || '{}');
+function holeStorageKey(){ return `sgt26Hole_r${currentRound}`; }
+function scoreStorageKey(){ return `sgt26Scores_r${currentRound}`; }
+
+let hole = +(localStorage.getItem(holeStorageKey()) || 1);
+let scores = JSON.parse(localStorage.getItem(scoreStorageKey()) || '{}');
 
 function shotsOnHole(ch,si){
   return Math.floor(ch/18)+(si <= (ch%18) ? 1 : 0);
@@ -436,8 +484,9 @@ function totalFor(pid){
 }
 
 function save(){
-  localStorage.sgt26Scores=JSON.stringify(scores);
-  localStorage.sgt26Hole=hole;
+  localStorage.setItem(scoreStorageKey(), JSON.stringify(scores));
+  localStorage.setItem(holeStorageKey(), hole);
+  localStorage.sgt26Round = currentRound;
 }
 
 function formatRoundDate(value){
@@ -451,8 +500,7 @@ function formatRoundDate(value){
 function renderRoundMeta(){
   if(!roundData) return;
   document.getElementById('roundLabel').textContent=`ROUND ${roundData.round}`;
-  document.getElementById('courseTee').textContent=
-    `${String(roundData.course||'').toUpperCase()} · ${String(roundData.tee||'').toUpperCase()} TEE`;
+  document.getElementById('roundSelect').value=String(roundData.round);
   document.getElementById('roundDate').textContent=formatRoundDate(roundData.date);
   document.getElementById('teeTime').textContent=String(roundData.teeTime||'TBD').toUpperCase();
 }
@@ -588,11 +636,42 @@ function loadRoundData(){
     };
 
     script.src=
-      `${DATA_ENDPOINT}?round=${ROUND_NUMBER}&callback=${encodeURIComponent(callbackName)}&v=${encodeURIComponent(APP_VERSION)}`;
+      `${DATA_ENDPOINT}?round=${currentRound}&callback=${encodeURIComponent(callbackName)}&v=${encodeURIComponent(APP_VERSION)}`;
 
     document.head.appendChild(script);
   });
 }
+
+
+function switchRound(roundNumber){
+  const nextRound=Number(roundNumber);
+  if(!Number.isInteger(nextRound) || nextRound<1 || nextRound>6 || nextRound===currentRound) return;
+
+  currentRound=nextRound;
+  localStorage.sgt26Round=currentRound;
+
+  hole=+(localStorage.getItem(holeStorageKey()) || 1);
+  scores=JSON.parse(localStorage.getItem(scoreStorageKey()) || '{}');
+
+  document.getElementById('best').textContent='LOADING…';
+
+  loadRoundData()
+    .then(()=>window.scrollTo({top:0,behavior:'smooth'}))
+    .catch(error=>{
+      console.error('SGT26 round switch failed:',error);
+      document.getElementById('best').textContent='DATA ERROR';
+    });
+}
+
+document.getElementById('roundSelect').addEventListener('change',e=>{
+  switchRound(e.target.value);
+});
+
+/* Prototype reset is retained without consuming a main navigation button:
+   double-tap/click the AUTO SAVED status strip to reset the current round. */
+document.querySelector('.status').addEventListener('dblclick',resetRound);
+
+document.getElementById('roundSelect').value=String(currentRound);
 
 loadRoundData().catch(error=>{
   console.error('SGT26 round-data load failed:',error);
