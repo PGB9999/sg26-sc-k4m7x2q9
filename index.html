@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- SGT26_BUILD:RyderCup2018.10 -->
+<!-- SGT26_BUILD:RyderCup2018.11 -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -411,38 +411,35 @@ button{font:inherit}
 }
 
 
-/* RyderCup2018.10 — allow long course names to use two lines */
-.course .value,
-#roundSelect{
-  white-space:normal;
-  line-height:1.08;
-}
-#roundSelect{
-  max-width:100%;
-}
-
+/* RyderCup2018.11 — simplified round/course header */
+.roundbarSimple{grid-template-columns:minmax(0,2.15fr) minmax(108px,.85fr)}
+.roundbarSimple>div:nth-child(2){border-left:1px solid rgba(255,255,255,.18)}
+.roundCourse{position:relative;min-width:0}
+.courseDisplay{position:relative;padding-right:20px;font-weight:900;font-size:18px;line-height:1.08;white-space:normal;overflow:visible}
+.courseDisplay::after{content:"⌄";position:absolute;right:0;top:1px;font-size:15px;line-height:1;font-weight:700}
+.roundSelectOverlay{position:absolute;left:0;right:0;top:25px;bottom:0;width:100%;height:calc(100% - 25px);opacity:0;z-index:3;cursor:pointer}
 </style>
 <script>
-  const APP_VERSION = "RyderCup2018.10";
+  const APP_VERSION = "RyderCup2018.11";
   console.info("SGT26 Scorecard", APP_VERSION);
 </script>
 </head>
 <body>
 <div class="app">
-  <img class="banner" src="sgt26-banner.png?v=RyderCup2018.10" alt="Spanish Golf Tour 2026">
-  <div class="roundbar">
-    <div>
+  <img class="banner" src="sgt26-banner.png?v=RyderCup2018.11" alt="Spanish Golf Tour 2026">
+  <div class="roundbar roundbarSimple">
+    <div class="roundCourse">
       <span id="roundLabel">ROUND 1</span>
-      <select id="roundSelect" class="roundSelect" aria-label="Choose round">
+      <div id="courseDisplay" class="courseDisplay">LAS BRISAS · 59 TEE</div>
+      <select id="roundSelect" class="roundSelect roundSelectOverlay" aria-label="Choose round">
         <option value="1">LAS BRISAS · 59 TEE</option>
         <option value="2">LOS ARQUEROS · YELLOW TEE</option>
-        <option value="3">ATALAYA NEW · YELLOW TEE</option>
-        <option value="4">SANTA CLARA · YELLOW TEE</option>
-        <option value="5">MARBELLA · EQUIVALENT TEE</option>
+        <option value="3">ATALAYA GOLF - NEW COURSE · YELLOW TEE</option>
+        <option value="4">SANTA CLARA GOLF · YELLOW TEE</option>
+        <option value="5">MARBELLA GOLF RESORT · EQUIVALENT TEE</option>
         <option value="6">SANTANA · YELLOW TEE</option>
       </select>
     </div>
-    <div><span>DATE</span><span id="roundDate" style="display:inline;opacity:1;font-size:inherit;letter-spacing:0;margin:0">SAT 29 AUG 2026</span></div>
     <div><span>TEE TIME</span><span id="teeTime" style="display:inline;opacity:1;font-size:inherit;letter-spacing:0;margin:0">TBD</span></div>
   </div>
 
@@ -521,7 +518,9 @@ function renderRoundMeta(){
   if(!roundData) return;
   document.getElementById('roundLabel').textContent=`ROUND ${roundData.round}`;
   document.getElementById('roundSelect').value=String(roundData.round);
-  document.getElementById('roundDate').textContent=formatRoundDate(roundData.date);
+  const teeText=String(roundData.tee||'').trim();
+  document.getElementById('courseDisplay').textContent=
+    `${String(roundData.course||'').toUpperCase()}${teeText ? ' · ' + teeText.toUpperCase() + ' TEE' : ''}`;
   document.getElementById('teeTime').textContent=String(roundData.teeTime||'TBD').toUpperCase();
 }
 
@@ -827,7 +826,7 @@ loadRoundData()
     document.getElementById('best').textContent='DATA ERROR';
     setSaveStatus('LOCAL ONLY',true);
   });
-// RyderCup2018.10 course-name wrapping enabled
+// RyderCup2018.11 simplified round/course header enabled
 </script>
 </body>
 </html>
