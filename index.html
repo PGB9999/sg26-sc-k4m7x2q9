@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- SGT26_BUILD:1.5.3 -->
+<!-- SGT26_BUILD:1.5.4 -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -333,15 +333,48 @@ button{font:inherit}
   }
 }
 
+
+/* 1.5.4 — keep HOLE label + number fully inside the teal cell */
+.big7{
+  position:relative;
+  top:auto !important;
+  transform:translateY(8px) !important;
+  font-size:clamp(48px, 6.6dvh, 60px) !important;
+  line-height:.88 !important;
+}
+.big7::before{
+  transform:translateY(-34px) !important;
+  font-size:11px !important;
+}
+
+@media (max-height:850px){
+  .big7{
+    transform:translateY(7px) !important;
+    font-size:clamp(44px, 6.1dvh, 54px) !important;
+  }
+  .big7::before{
+    transform:translateY(-30px) !important;
+  }
+}
+@media (max-height:740px){
+  .big7{
+    transform:translateY(6px) !important;
+    font-size:clamp(40px, 5.7dvh, 49px) !important;
+  }
+  .big7::before{
+    transform:translateY(-27px) !important;
+  }
+}
+
 </style>
 <script>
-  const APP_VERSION = "1.5.3";
+  const APP_VERSION = "1.5.4";
   console.info("SGT26 Scorecard", APP_VERSION);
 </script>
 </head>
 <body>
 <div class="app">
-  <img class="banner" src="sgt26-banner.png?v=1.5.3" alt="Spanish Golf Tour 2026">
+  <img class="banner" src="sgt26-banner.png?v=1.5.4" alt="Spanish Golf Tour 2026">
   <div class="roundbar">
     <div><span>ROUND 1</span>LAS BRISAS · 59 TEE</div>
     <div><span>DATE</span>SAT 29 AUG 2026</div>
