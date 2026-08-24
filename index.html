@@ -1,4 +1,5 @@
 <!doctype html>
+<!-- SGT26_BUILD:1.5.1 -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -12,8 +13,8 @@
   --vh: 100dvh;
   --banner-h: clamp(92px, 17dvh, 142px);
   --round-h: clamp(58px, 7.2dvh, 74px);
-  --hole-h: clamp(122px, 15.5dvh, 158px);
-  --player-h: clamp(72px, 9.4dvh, 92px);
+  --hole-h: clamp(128px, 16dvh, 164px);
+  --player-h: clamp(74px, 9.6dvh, 94px);
   --nav-h: clamp(74px, 10dvh, 94px);
   --navy:#071728;
   --navy2:#0b2036;
@@ -40,8 +41,8 @@ body{min-height:100vh}
 .banner{
   display:block;
   width:100%;
-  height:var(--banner-h);
-  object-fit:cover;
+  height:auto;
+  object-fit:contain;
   object-position:center center;
   background:#111;
 }
@@ -52,11 +53,11 @@ body{min-height:100vh}
   grid-template-columns:1.15fr 1.35fr .9fr;
   gap:0;
   padding:0 10px;
-  min-height:var(--round-h);
+  min-height:clamp(64px, 7.8dvh, 82px);
   border-bottom:2px solid var(--orange);
 }
 .roundbar>div{
-  padding:5px 7px 5px;
+  padding:9px 9px 8px;
   font-size:13px;
   font-weight:900;
   line-height:1.15;
@@ -261,8 +262,8 @@ button{font:inherit}
 @media (max-height:760px){
   :root{
     --banner-h:84px;
-    --round-h:54px;
-    --hole-h:112px;
+    --round-h:60px;
+    --hole-h:118px;
     --player-h:68px;
     --nav-h:68px;
   }
@@ -297,10 +298,14 @@ button{font:inherit}
   .shots b,.pts b,.total b{font-size:24px}
 }
 </style>
+<script>
+  const APP_VERSION = "1.5.1";
+  console.info("SGT26 Scorecard", APP_VERSION);
+</script>
 </head>
 <body>
 <div class="app">
-  <img class="banner" src="sgt26-banner.png" alt="Spanish Golf Tour 2026">
+  <img class="banner" src="sgt26-banner.png?v=1.5.1" alt="Spanish Golf Tour 2026">
   <div class="roundbar">
     <div><span>ROUND 1</span>LAS BRISAS · 59 TEE</div>
     <div><span>DATE</span>SAT 29 AUG 2026</div>
