@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#061a2b">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Spanish Golf Tour 2026 — Tour Hub</title>
+
+  <style>
+    :root {
+      --hub-bg: #061a2b;
+      --focus: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      background: var(--hub-bg);
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      font-family: Arial, Helvetica, sans-serif;
+      overflow-x: hidden;
+    }
+
+    .hub-shell {
+      position: relative;
+      width: min(100vw, 853px);
+      margin: 0 auto;
+      background: var(--hub-bg);
+    }
+
+    .hub-art {
+      display: block;
+      width: 100%;
+      height: auto;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    /*
+      Real HTML hit areas positioned as percentages of the artwork.
+      Because they are relative to the displayed image box, they scale
+      correctly across different phone widths and aspect ratios.
+    */
+    .hub-link {
+      position: absolute;
+      top: 63.65%;
+      height: 24.25%;
+      border-radius: 3.5%;
+      background: transparent;
+      border: 0;
+      text-decoration: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .hub-link:focus-visible {
+      outline: 4px solid var(--focus);
+      outline-offset: -6px;
+    }
+
+    .hub-link:active::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: rgba(255, 255, 255, 0.10);
+    }
+
+    .hub-golf {
+      left: 2.35%;
+      width: 29.25%;
+    }
+
+    .hub-expenses {
+      left: 33.05%;
+      width: 30.35%;
+    }
+
+    .hub-photos {
+      left: 64.85%;
+      width: 32.25%;
+      cursor: default;
+    }
+
+    .hub-photos:active::after {
+      display: none;
+    }
+
+    /*
+      On very wide screens, keep the artwork phone-sized rather than
+      stretching it unnaturally.
+    */
+    @media (min-width: 854px) {
+      body {
+        padding: 16px 0;
+      }
+    }
+
+    /*
+      Landscape is supported, but intentionally keeps the whole portrait
+      composition visible. The user may scroll vertically if required.
+    */
+    @media (orientation: landscape) and (max-height: 600px) {
+      .hub-shell {
+        width: min(56vw, 853px);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="hub-shell" aria-label="Spanish Golf Tour 2026 main menu">
+    <img
+      class="hub-art"
+      src="hub-main-menu.png"
+      alt="Spanish Golf Tour 2026 Tour Hub with Golf, Expenses and Photos menu options"
+      width="853"
+      height="1844">
+
+    <a
+      class="hub-link hub-golf"
+      href="index.html"
+      aria-label="Open Golf — Scorecard and Leaderboard">
+    </a>
+
+    <a
+      class="hub-link hub-expenses"
+      href="expenses.html"
+      aria-label="Open Expenses">
+    </a>
+
+    <span
+      class="hub-link hub-photos"
+      role="button"
+      aria-disabled="true"
+      aria-label="Photos — coming later">
+    </span>
+  </main>
+</body>
+</html>
