@@ -115,7 +115,7 @@
     .footer{
       background:var(--navy2);
       display:grid;
-      grid-template-columns:1fr;
+      grid-template-columns:1fr 1fr;
       gap:10px;
       padding:12px;
       padding-bottom:calc(12px + env(safe-area-inset-bottom));
@@ -163,7 +163,7 @@
   </header>
 
   <nav class="golfToggle" aria-label="Golf view">
-    <a id="scorecardLink" href="index.html">SCORECARD</a>
+    <a id="scorecardLink" href="scorecard.html">SCORECARD</a>
     <span aria-current="page">LEADERBOARD</span>
   </nav>
 
@@ -185,7 +185,8 @@
     <span id="freshness">NO CACHED DATA</span>
   </div>
 
-  <footer class="footer footerSingle">
+  <footer class="footer">
+    <a href="index.html">🏠 MENU</a>
     <button id="refreshBtn" type="button">↻ REFRESH</button>
   </footer>
 </div>
@@ -298,7 +299,7 @@ function renderRows(items){
 }
 
 function updateLinks(){
-  document.getElementById('scorecardLink').href=`index.html?round=${currentRound}`;
+  document.getElementById('scorecardLink').href=`scorecard.html?round=${currentRound}`;
 }
 
 function updateMeta(roundData){
