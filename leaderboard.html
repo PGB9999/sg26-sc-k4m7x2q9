@@ -115,7 +115,7 @@
     .footer{
       background:var(--navy2);
       display:grid;
-      grid-template-columns:1fr 1fr;
+      grid-template-columns:1fr;
       gap:10px;
       padding:12px;
       padding-bottom:calc(12px + env(safe-area-inset-bottom));
@@ -182,26 +182,76 @@
 
   <div class="status">
     <strong id="updated">LOADING…</strong>
-    <span id="countdown" class="countdown">Refresh in 15s</span>
+    <span id="freshness">NO CACHED DATA</span>
   </div>
 
-  <footer class="footer">
-    <a id="backToScorecard" href="index.html">← SCORECARD</a>
+  <footer class="footer footerSingle">
     <button id="refreshBtn" type="button">↻ REFRESH</button>
   </footer>
 </div>
 
 <script>
 const API_URL="https://script.google.com/macros/s/AKfycbz06cod2GzirOUT7HCyMLgzF9RLJE8psZQqEQFSzrKut3fYMGVsRicuEutsFabVNelm/exec";
-const REFRESH_SECONDS=15;
 let currentRound=1;
-let timer=null;
-let remaining=REFRESH_SECONDS;
-
 function queryRound(){
   const q=new URLSearchParams(location.search);
   const n=Number(q.get('round')||1);
   return Number.isInteger(n)&&n>=1&&n<=6?n:1;
+}
+
+
+function cacheKey(roundNumber){
+  return `sgt26_leaderboard_round_${roundNumber}`;
+}
+
+function loadCachedLeaderboard(roundNumber){
+  try{
+    const raw=localStorage.getItem(cacheKey(roundNumber));
+    if(!raw) return null;
+    const parsed=JSON.parse(raw);
+    if(!parsed || !Array.isArray(parsed.data)) return null;
+    return parsed;
+  }catch(error){
+    console.warn('Leaderboard cache read failed:',error);
+    return null;
+  }
+}
+
+function saveCachedLeaderboard(roundNumber,data){
+  try{
+    localStorage.setItem(
+      cacheKey(roundNumber),
+      JSON.stringify({
+        savedAt:new Date().toISOString(),
+        data:data
+      })
+    );
+  }catch(error){
+    console.warn('Leaderboard cache write failed:',error);
+  }
+}
+
+function formatFreshness(iso){
+  if(!iso) return 'NO CACHED DATA';
+  const d=new Date(iso);
+  if(Number.isNaN(d.getTime())) return 'LAST KNOWN DATA';
+  const now=Date.now();
+  const secs=Math.max(0,Math.floor((now-d.getTime())/1000));
+  if(secs<5) return 'UPDATED JUST NOW';
+  if(secs<60) return `UPDATED ${secs}s AGO`;
+  const mins=Math.floor(secs/60);
+  return `UPDATED ${mins}m AGO`;
+}
+
+function showCachedLeaderboard(){
+  const cached=loadCachedLeaderboard(currentRound);
+  if(!cached) return false;
+
+  renderRows(cached.data);
+  document.getElementById('updated').textContent='LAST KNOWN';
+  document.getElementById('updated').classList.remove('error');
+  document.getElementById('freshness').textContent=formatFreshness(cached.savedAt);
+  return true;
 }
 
 function apiJsonp(params){
@@ -249,7 +299,6 @@ function renderRows(items){
 
 function updateLinks(){
   document.getElementById('scorecardLink').href=`index.html?round=${currentRound}`;
-  document.getElementById('backToScorecard').href=`index.html?round=${currentRound}`;
 }
 
 function updateMeta(roundData){
@@ -259,6 +308,13 @@ function updateMeta(roundData){
 }
 
 async function loadLeaderboard(){
+  const host=document.getElementById('rows');
+  const hadCache=showCachedLeaderboard();
+
+  if(!hadCache){
+    host.innerHTML='<div class="empty">Loading leaderboard…</div>';
+  }
+
   document.getElementById('updated').textContent='UPDATING…';
   document.getElementById('updated').classList.remove('error');
 
@@ -267,29 +323,25 @@ async function loadLeaderboard(){
       apiJsonp({service:'scorecards',action:'leaderboard',round:currentRound}),
       apiJsonp({service:'scorecards',action:'round',round:currentRound})
     ]);
+
     renderRows(leaderboard);
     updateMeta(roundPayload.round);
-    document.getElementById('updated').textContent='✓ LIVE';
-    resetCountdown();
+    saveCachedLeaderboard(currentRound,leaderboard);
+
+    document.getElementById('updated').textContent='✓ UPDATED';
+    document.getElementById('freshness').textContent='JUST NOW';
   }catch(error){
     console.error(error);
-    document.getElementById('updated').textContent='⚠ DATA ERROR';
-    document.getElementById('updated').classList.add('error');
-  }
-}
 
-function resetCountdown(){
-  remaining=REFRESH_SECONDS;
-  document.getElementById('countdown').textContent=`Refresh in ${remaining}s`;
-}
-
-function tick(){
-  remaining-=1;
-  if(remaining<=0){
-    loadLeaderboard();
-    return;
+    if(hadCache){
+      document.getElementById('updated').textContent='⚠ LAST KNOWN';
+      document.getElementById('freshness').textContent='NETWORK UNAVAILABLE';
+    }else{
+      document.getElementById('updated').textContent='⚠ DATA ERROR';
+      document.getElementById('updated').classList.add('error');
+      document.getElementById('freshness').textContent='NO CACHED DATA';
+    }
   }
-  document.getElementById('countdown').textContent=`Refresh in ${remaining}s`;
 }
 
 document.getElementById('roundSelect').addEventListener('change',e=>{
@@ -305,7 +357,7 @@ currentRound=queryRound();
 document.getElementById('roundSelect').value=String(currentRound);
 updateLinks();
 loadLeaderboard();
-timer=setInterval(tick,1000);
 </script>
+<!-- RyderCup2022.2: cached leaderboard + refresh-on-entry -->
 </body>
 </html>
