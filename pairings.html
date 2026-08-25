@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0d1b36">
+<title>Spanish Golf Tour 2026 — Pairings</title>
+<style>
+:root{--navy:#0d1b36;--navy2:#071522;--cream:#f4eddf;--teal:#1aa0a4;--orange:#f36b18;--line:rgba(13,27,54,.14)}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--navy2);font-family:Arial,Helvetica,sans-serif;color:var(--navy)}
+.app{max-width:620px;margin:0 auto;background:var(--cream);min-height:100vh}
+header{background:var(--navy);color:white;padding:18px;border-bottom:3px solid var(--orange)}
+header h1{margin:0;font-size:24px}
+header p{margin:5px 0 0;color:#c6d0dc;font-weight:700;font-size:13px}
+main{padding:16px}
+.card{background:#fffaf1;border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:14px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+label{display:block;font-size:12px;font-weight:900;letter-spacing:.35px;margin-bottom:6px}
+select{width:100%;min-height:46px;border:2px solid #cad1d8;border-radius:9px;background:white;color:var(--navy);padding:8px 10px;font-size:17px;font-weight:800}
+.switchRow{display:flex;align-items:center;justify-content:space-between;gap:14px}
+.switchText strong{display:block;font-size:18px}
+.switchText small{display:block;margin-top:3px;color:#68717d;font-weight:700}
+.toggle{position:relative;width:68px;height:38px;flex:0 0 auto}
+.toggle input{opacity:0;width:0;height:0}
+.slider{position:absolute;inset:0;background:#aeb5bc;border-radius:999px}
+.slider:before{content:"";position:absolute;width:30px;height:30px;left:4px;top:4px;background:white;border-radius:50%;transition:.15s;box-shadow:0 1px 4px rgba(0,0,0,.25)}
+.toggle input:checked + .slider{background:var(--teal)}
+.toggle input:checked + .slider:before{transform:translateX(30px)}
+.groupTitle{font-size:16px;font-weight:900;margin:2px 0 10px}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+button,a.button{min-height:52px;border-radius:11px;border:2px solid var(--teal);font-weight:900;font-size:16px;display:flex;align-items:center;justify-content:center;text-decoration:none}
+button.primary{background:var(--teal);color:white}
+a.button{background:transparent;color:var(--navy)}
+.status{margin-top:12px;padding:10px 12px;border-radius:9px;background:#eef3f3;font-weight:900;font-size:13px}
+.status.ok{color:#0a6b57}
+.status.error{color:#b94419;background:#fff1ea}
+.hint{font-size:12px;color:#6e7681;line-height:1.4;margin-top:10px}
+@media(max-width:380px){.row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+<header><h1>Pairings</h1><p>Spanish Golf Tour 2026</p></header>
+<main>
+<section class="card">
+  <div class="switchRow">
+    <div class="switchText"><strong>Pairings Enabled</strong><small>Turn off after the split-group round.</small></div>
+    <label class="toggle"><input id="enabled" type="checkbox"><span class="slider"></span></label>
+  </div>
+</section>
+
+<section class="card">
+  <label for="round">ROUND</label>
+  <select id="round">
+    <option value="1">Round 1</option><option value="2">Round 2</option><option value="3">Round 3</option>
+    <option value="4">Round 4</option><option value="5">Round 5</option><option value="6">Round 6</option>
+  </select>
+</section>
+
+<section class="card">
+  <div class="groupTitle">GROUP A</div>
+  <div class="row"><div><label>PLAYER 1</label><select id="a1"></select></div><div><label>PLAYER 2</label><select id="a2"></select></div></div>
+</section>
+
+<section class="card">
+  <div class="groupTitle">GROUP B</div>
+  <div class="row"><div><label>PLAYER 1</label><select id="b1"></select></div><div><label>PLAYER 2</label><select id="b2"></select></div></div>
+</section>
+
+<div class="actions">
+  <a class="button" href="index.html">← MAIN MENU</a>
+  <button id="saveBtn" class="primary" type="button">SAVE PAIRINGS</button>
+</div>
+<div id="status" class="status">Loading current pairings…</div>
+<div class="hint">Changes save directly to the Pairings sheet. The Scorecard will use the new setup on its next refresh/open.</div>
+</main>
+</div>
+
+<script>
+const API_URL="https://script.google.com/macros/s/AKfycbz06cod2GzirOUT7HCyMLgzF9RLJE8psZQqEQFSzrKut3fYMGVsRicuEutsFabVNelm/exec";
+const PLAYERS=['PGB','DCM','STU','GEN'];
+
+['a1','a2','b1','b2'].forEach(id=>{
+  document.getElementById(id).innerHTML=PLAYERS.map(p=>`<option value="${p}">${p}</option>`).join('');
+});
+
+function apiJsonp(params){
+  return new Promise((resolve,reject)=>{
+    const cb=`pairAdmin_${Date.now()}_${Math.floor(Math.random()*100000)}`;
+    const script=document.createElement('script');
+    const cleanup=()=>{try{delete window[cb]}catch(_){}script.remove()};
+    const timer=setTimeout(()=>{cleanup();reject(new Error('Request timed out.'))},15000);
+    window[cb]=payload=>{clearTimeout(timer);cleanup();if(!payload||payload.ok===false){reject(new Error(payload?.error||'Request failed.'));return}resolve(payload.data)};
+    script.onerror=()=>{clearTimeout(timer);cleanup();reject(new Error('Unable to contact backend.'))};
+    const q=new URLSearchParams({...params,callback:cb});
+    script.src=`${API_URL}?${q.toString()}`;
+    document.head.appendChild(script);
+  });
+}
+
+function setStatus(text,type=''){
+  const el=document.getElementById('status');
+  el.className='status'+(type?' '+type:'');
+  el.textContent=text;
+}
+
+function setForm(config){
+  document.getElementById('enabled').checked=!!config.enabled;
+  document.getElementById('round').value=String(config.round||1);
+  const a=config.groups?.A||['PGB','GEN'];
+  const b=config.groups?.B||['DCM','STU'];
+  document.getElementById('a1').value=a[0]||'PGB';
+  document.getElementById('a2').value=a[1]||'GEN';
+  document.getElementById('b1').value=b[0]||'DCM';
+  document.getElementById('b2').value=b[1]||'STU';
+}
+
+function validate(){
+  const vals=['a1','a2','b1','b2'].map(id=>document.getElementById(id).value);
+  if(new Set(vals).size!==4) throw new Error('Each player must appear exactly once.');
+}
+
+async function load(){
+  try{
+    const c=await apiJsonp({service:'scorecards',action:'pairings'});
+    setForm(c);
+    setStatus('Current pairings loaded.','ok');
+  }catch(e){setStatus(e.message,'error')}
+}
+
+document.getElementById('saveBtn').addEventListener('click',async()=>{
+  const btn=document.getElementById('saveBtn');
+  try{
+    validate();
+    btn.disabled=true;
+    setStatus('Saving pairings…');
+    const c=await apiJsonp({
+      service:'scorecards',action:'savePairings',
+      enabled:document.getElementById('enabled').checked?'YES':'NO',
+      round:document.getElementById('round').value,
+      groupA1:document.getElementById('a1').value,
+      groupA2:document.getElementById('a2').value,
+      groupB1:document.getElementById('b1').value,
+      groupB2:document.getElementById('b2').value
+    });
+    setForm(c);
+    setStatus('✓ Pairings saved.','ok');
+  }catch(e){setStatus(e.message,'error')}
+  finally{btn.disabled=false}
+});
+
+load();
+</script>
+</body>
+</html>
