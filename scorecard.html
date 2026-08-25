@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- SGT26_BUILD:RyderCup2022.5 -->
+<!-- SGT26_BUILD:RyderCup2022.5.1 -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -494,69 +494,78 @@ button{font:inherit}
 }
 
 
-/* RyderCup2022.5 — compact vertical layout only for normal four-player mode.
-   Pairings mode keeps the existing spacing unchanged. */
-body.fourBallCompact .banner{
-  max-height:112px;
-  object-fit:cover;
+/* RyderCup2022.5.1 — corrected compact four-player mode.
+   Pairings mode is left exactly as in V2.4. */
+body.fourBallCompact{
+  --hole-h:92px;
+  --player-h:66px;
+  --nav-h:64px;
 }
+
+body.fourBallCompact .banner{
+  height:86px;
+  width:100%;
+  object-fit:cover;
+  object-position:center center;
+}
+
 body.fourBallCompact .roundbar{
-  min-height:62px;
+  min-height:56px;
 }
 body.fourBallCompact .roundbar>div{
-  padding-top:7px;
-  padding-bottom:6px;
+  padding-top:6px;
+  padding-bottom:5px;
 }
+
 body.fourBallCompact .golfToggle button,
 body.fourBallCompact .golfToggle a{
-  min-height:40px;
-  padding-top:6px;
-  padding-bottom:6px;
+  min-height:36px;
+  padding:5px 8px;
 }
-body.fourBallCompact .holegrid{
-  min-height:108px;
-}
+
 body.fourBallCompact .stable{
-  padding-top:4px;
-  padding-bottom:4px;
+  padding:3px 8px;
+  font-size:13px;
 }
+
 body.fourBallCompact .head{
-  min-height:27px;
+  min-height:24px;
 }
+
 body.fourBallCompact .player{
-  min-height:76px;
   padding-top:2px;
   padding-bottom:2px;
 }
+
 body.fourBallCompact .status{
-  min-height:27px;
-  padding-top:4px;
-  padding-bottom:4px;
-}
-body.fourBallCompact .nav{
-  padding-top:4px;
-  padding-bottom:calc(4px + env(safe-area-inset-bottom));
-}
-body.fourBallCompact .nav button{
-  min-height:72px;
+  min-height:24px;
+  padding:3px 8px;
 }
 
-/* Preserve finger-friendly score controls even in compact four-ball mode. */
+body.fourBallCompact .nav{
+  padding-top:3px;
+  padding-bottom:calc(3px + env(safe-area-inset-bottom));
+}
+body.fourBallCompact .nav button{
+  min-height:64px;
+}
+
+/* Do not shrink the actual scoring controls below their proven sizes. */
 body.fourBallCompact .minus,
 body.fourBallCompact .plus,
 body.fourBallCompact .score{
-  min-height:50px;
+  min-height:48px;
 }
 
 </style>
 <script>
-  const APP_VERSION = "RyderCup2022.5";
+  const APP_VERSION = "RyderCup2022.5.1";
   console.info("SGT26 Scorecard", APP_VERSION);
 </script>
 </head>
 <body>
 <div class="app">
-  <img class="banner" src="sgt26-banner.png?v=RyderCup2022.5" alt="Spanish Golf Tour 2026">
+  <img class="banner" src="sgt26-banner.png?v=RyderCup2022.5.1" alt="Spanish Golf Tour 2026">
   <div class="roundbar roundbarSimple">
     <div class="roundCourse">
       <span id="roundLabel">ROUND 1</span>
@@ -1088,7 +1097,7 @@ loadRoundData()
     document.getElementById('best').textContent='DATA ERROR';
     setSaveStatus('LOCAL ONLY',true);
   });
-// RyderCup2022.5 adaptive compact four-player layout enabled
+// RyderCup2022.5.1 corrected compact four-player layout enabled
 </script>
 </body>
 </html>
