@@ -549,6 +549,9 @@ body.fourBallCompact .nav{
 body.fourBallCompact .nav button{
   min-height:64px;
 }
+.navQuick{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.navQuick .expensesLink{min-width:0;min-height:var(--nav-h);padding:5px 2px;font-size:10px;line-height:1.15;text-align:center}
+.photoLink{border-color:var(--teal) !important;background:#0a1726 !important}
 
 /* Do not shrink the actual scoring controls below their proven sizes. */
 body.fourBallCompact .minus,
@@ -614,13 +617,20 @@ body.fourBallCompact .score{
   <div class="nav">
     <button onclick="move(-1)">‹ PREV<br>HOLE</button>
     <button class="next" onclick="move(1)">NEXT HOLE ›</button>
-    <a class="expensesLink" href="index.html">MENU</a>
+    <div class="navQuick">
+      <a id="photosLink" class="expensesLink photoLink" href="photos.html">📷<br>PHOTOS</a>
+      <a class="expensesLink" href="index.html">⌂<br>MENU</a>
+    </div>
   </div>
 </div>
 
 <script>
 const DATA_ENDPOINT = "https://script.google.com/macros/s/AKfycbz06cod2GzirOUT7HCyMLgzF9RLJE8psZQqEQFSzrKut3fYMGVsRicuEutsFabVNelm/exec";
-let currentRound = +(localStorage.sgt26Round || 1);
+const scorecardParams=new URLSearchParams(window.location.search);
+const requestedRound=Number(scorecardParams.get('round'));
+const requestedHole=Number(scorecardParams.get('hole'));
+let currentRound=(Number.isInteger(requestedRound)&&requestedRound>=1&&requestedRound<=6)?requestedRound:+(localStorage.sgt26Round||1);
+if(Number.isInteger(requestedRound)&&requestedRound>=1&&requestedRound<=6) localStorage.sgt26Round=requestedRound;
 
 let players = [];
 let holes = [];
@@ -631,7 +641,8 @@ let selectedPairingGroup = null;
 function holeStorageKey(){ return `sgt26Hole_r${currentRound}`; }
 function scoreStorageKey(){ return `sgt26Scores_r${currentRound}`; }
 
-let hole = +(localStorage.getItem(holeStorageKey()) || 1);
+let hole=(Number.isInteger(requestedHole)&&requestedHole>=1&&requestedHole<=18)?requestedHole:+(localStorage.getItem(holeStorageKey())||1);
+if(Number.isInteger(requestedHole)&&requestedHole>=1&&requestedHole<=18) localStorage.setItem(holeStorageKey(),requestedHole);
 let scores = JSON.parse(localStorage.getItem(scoreStorageKey()) || '{}');
 
 function shotsOnHole(ch,si){
@@ -1086,7 +1097,13 @@ document.getElementById('roundSelect').addEventListener('change',e=>{
    double-tap/click the AUTO SAVED status strip to reset the current round. */
 document.querySelector('.status').addEventListener('dblclick',resetRound);
 
+function syncPhotosLink(){
+  const link=document.getElementById('photosLink');
+  if(link) link.href=`photos.html?from=scorecard&round=${currentRound}&hole=${hole}`;
+}
+document.getElementById('photosLink').addEventListener('click',syncPhotosLink);
 document.getElementById('roundSelect').value=String(currentRound);
+syncPhotosLink();
 setScoreLoading(true);
 
 loadRoundData()
