@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0d1b36">
-<title>Spanish Golf Tour 2026 — Photos Prototype V2</title>
+<title>Spanish Golf Tour 2026 — Photos</title>
 
 <style>
 :root{
@@ -51,8 +51,21 @@ body{min-height:100vh}
   font-size:14px;
   font-weight:900
 }
+.actions button:disabled{opacity:.55}
 .primary{background:var(--teal);color:white}
 .secondary{background:transparent;color:var(--navy)}
+
+.uploadStatus{
+  display:none;
+  padding:9px 12px;
+  background:#eef3f3;
+  border-bottom:1px solid var(--line);
+  font-size:12px;
+  font-weight:900;
+}
+.uploadStatus.show{display:block}
+.uploadStatus.ok{color:#08715c}
+.uploadStatus.error{color:#bb4319;background:#fff0e8}
 
 .filters{
   display:flex;gap:8px;overflow-x:auto;padding:10px 12px;background:var(--cream);
@@ -87,32 +100,10 @@ body{min-height:100vh}
   font-size:34px;opacity:.85
 }
 
-.emptyNote{
+.noteBox{
   padding:12px 14px;background:#fffaf1;border-top:1px solid var(--line);
   color:var(--muted);font-size:12px;font-weight:800;line-height:1.35
 }
-
-.modal{
-  position:fixed;inset:0;background:rgba(2,9,16,.82);display:none;align-items:flex-end;
-  justify-content:center;z-index:20
-}
-.modal.open{display:flex}
-.sheet{
-  width:min(100%,680px);background:var(--cream);border-radius:18px 18px 0 0;
-  padding:16px;padding-bottom:calc(16px + env(safe-area-inset-bottom))
-}
-.sheet h2{margin:0 0 12px;font-size:20px}
-.field{margin-bottom:12px}
-.field label{display:block;font-size:11px;font-weight:900;letter-spacing:.4px;margin-bottom:6px}
-.field select,.field input[type="text"]{
-  width:100%;min-height:46px;border:2px solid #c8d0d6;border-radius:9px;background:white;
-  padding:8px 10px;font-size:16px
-}
-.sheetBtns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.sheetBtns button{min-height:48px;border-radius:10px;font-weight:900;font-size:15px}
-.cancel{background:transparent;border:2px solid var(--teal);color:var(--navy)}
-.add{background:var(--teal);border:2px solid var(--teal);color:white}
-.note{font-size:11px;color:var(--muted);margin:10px 0 0;line-height:1.35}
 
 .lightbox{
   position:fixed;inset:0;background:#02070c;display:none;z-index:30;
@@ -161,6 +152,8 @@ body{min-height:100vh}
     <button id="choosePhotosBtn" class="secondary" type="button">🖼️ CHOOSE PHOTOS</button>
   </section>
 
+  <div id="uploadStatus" class="uploadStatus"></div>
+
   <nav class="filters" aria-label="Photo filters">
     <button class="chip active" data-filter="all" type="button">ALL</button>
     <button class="chip" data-filter="round1" type="button">ROUND 1</button>
@@ -196,41 +189,13 @@ body{min-height:100vh}
     </button>
   </main>
 
-  <div class="emptyNote">
-    Prototype V2: camera and gallery picker are live. Selected images are still preview-only and are not yet uploaded to Google Drive.
+  <div class="noteBox">
+    Drive upload test build. TAKE PHOTO uploads immediately after the camera returns. CHOOSE PHOTOS uploads each selected image to the shared Tour Photos folder.
   </div>
 </div>
 
 <input id="cameraInput" class="hiddenInput" type="file" accept="image/*" capture="environment">
 <input id="galleryInput" class="hiddenInput" type="file" accept="image/*" multiple>
-
-<div id="uploadModal" class="modal" aria-hidden="true">
-  <section class="sheet" role="dialog" aria-modal="true" aria-labelledby="uploadTitle">
-    <h2 id="uploadTitle">Add Tour Photos</h2>
-
-    <div class="field">
-      <label for="event">EVENT / ROUND</label>
-      <select id="event">
-        <option value="round1">Round 1 · Las Brisas</option>
-        <option value="round2">Round 2</option>
-        <option value="offcourse">Off Course</option>
-        <option value="travel">Travel</option>
-      </select>
-    </div>
-
-    <div class="field">
-      <label for="caption">CAPTION · OPTIONAL</label>
-      <input id="caption" type="text" maxlength="80" placeholder="e.g. PGB escapes the bunker">
-    </div>
-
-    <div class="sheetBtns">
-      <button id="cancelBtn" class="cancel" type="button">CANCEL</button>
-      <button id="addBtn" class="add" type="button">ADD TO GALLERY</button>
-    </div>
-
-    <p id="selectionNote" class="note">No photo selected.</p>
-  </section>
-</div>
 
 <div id="lightbox" class="lightbox" aria-hidden="true">
   <button id="lightboxClose" class="lightboxClose" type="button" aria-label="Close">×</button>
@@ -239,111 +204,486 @@ body{min-height:100vh}
 </div>
 
 <script>
-const gallery=document.getElementById('gallery');
-const uploadModal=document.getElementById('uploadModal');
-const cameraInput=document.getElementById('cameraInput');
-const galleryInput=document.getElementById('galleryInput');
-const lightbox=document.getElementById('lightbox');
-const lightboxImg=document.getElementById('lightboxImg');
-const lightboxCaption=document.getElementById('lightboxCaption');
-const selectionNote=document.getElementById('selectionNote');
+const API_URL =
+  "https://script.google.com/macros/s/AKfycbz06cod2GzirOUT7HCyMLgzF9RLJE8psZQqEQFSzrKut3fYMGVsRicuEutsFabVNelm/exec";
 
-let pendingFiles=[];
+const gallery =
+  document.getElementById('gallery');
 
-function openUpload(files,source){
-  pendingFiles=[...files];
-  if(!pendingFiles.length) return;
+const cameraInput =
+  document.getElementById('cameraInput');
 
-  selectionNote.textContent=
-    source==='camera'
-      ? '1 new photo ready.'
-      : `${pendingFiles.length} photo${pendingFiles.length===1?'':'s'} ready.`;
+const galleryInput =
+  document.getElementById('galleryInput');
 
-  uploadModal.classList.add('open');
-  uploadModal.setAttribute('aria-hidden','false');
+const takePhotoBtn =
+  document.getElementById('takePhotoBtn');
+
+const choosePhotosBtn =
+  document.getElementById('choosePhotosBtn');
+
+const statusEl =
+  document.getElementById('uploadStatus');
+
+const lightbox =
+  document.getElementById('lightbox');
+
+const lightboxImg =
+  document.getElementById('lightboxImg');
+
+const lightboxCaption =
+  document.getElementById('lightboxCaption');
+
+
+function setStatus(text,type=''){
+
+  statusEl.textContent =
+    text;
+
+  statusEl.className =
+    'uploadStatus show' +
+    (type ? ' ' + type : '');
 }
 
-function closeUpload(){
-  uploadModal.classList.remove('open');
-  uploadModal.setAttribute('aria-hidden','true');
-  pendingFiles=[];
-  cameraInput.value='';
-  galleryInput.value='';
-  document.getElementById('caption').value='';
-  selectionNote.textContent='No photo selected.';
+
+function clearStatus(){
+
+  statusEl.textContent =
+    '';
+
+  statusEl.className =
+    'uploadStatus';
 }
 
-document.getElementById('takePhotoBtn').addEventListener('click',()=>{
-  cameraInput.click();
-});
 
-document.getElementById('choosePhotosBtn').addEventListener('click',()=>{
-  galleryInput.click();
-});
+function fileToBase64(file){
 
-cameraInput.addEventListener('change',()=>{
-  openUpload(cameraInput.files,'camera');
-});
+  return new Promise(
+    (resolve,reject)=>{
 
-galleryInput.addEventListener('change',()=>{
-  openUpload(galleryInput.files,'gallery');
-});
+      const reader =
+        new FileReader();
 
-document.getElementById('cancelBtn').addEventListener('click',closeUpload);
+      reader.onload =
+        ()=>{
 
-document.querySelectorAll('.chip').forEach(btn=>{
-  btn.addEventListener('click',()=>{
-    document.querySelectorAll('.chip').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    const filter=btn.dataset.filter;
-    [...gallery.children].forEach(tile=>{
-      tile.style.display=(filter==='all'||tile.dataset.category===filter)?'block':'none';
-    });
-  });
-});
+          const result =
+            String(
+              reader.result || ''
+            );
 
-document.getElementById('addBtn').addEventListener('click',()=>{
-  const event=document.getElementById('event').value;
-  const eventLabel=document.getElementById('event').selectedOptions[0].textContent;
-  const caption=document.getElementById('caption').value.trim();
+          const comma =
+            result.indexOf(',');
 
-  pendingFiles.forEach(file=>{
-    if(!file.type.startsWith('image/')) return;
+          resolve(
+            comma >= 0
+              ? result.slice(comma + 1)
+              : result
+          );
+        };
 
-    const url=URL.createObjectURL(file);
-    const tile=document.createElement('button');
-    tile.type='button';
-    tile.className='tile';
-    tile.dataset.category=event;
-    tile.dataset.url=url;
-    tile.dataset.caption=caption || eventLabel;
-    tile.innerHTML=`<img src="${url}" alt=""><span class="meta">${caption || eventLabel}</span>`;
-    gallery.prepend(tile);
-  });
+      reader.onerror =
+        ()=>reject(
+          new Error(
+            'Unable to read photo.'
+          )
+        );
 
-  closeUpload();
-});
+      reader.readAsDataURL(
+        file
+      );
+    }
+  );
+}
 
-gallery.addEventListener('click',event=>{
-  const tile=event.target.closest('.tile');
-  if(!tile || !tile.dataset.url) return;
 
-  lightboxImg.src=tile.dataset.url;
-  lightboxCaption.textContent=tile.dataset.caption || '';
-  lightbox.classList.add('open');
-  lightbox.setAttribute('aria-hidden','false');
-});
+/**
+ * Cross-origin POST deliberately uses no-cors.
+ *
+ * The browser is allowed to send a normal HTML-style POST to Apps Script,
+ * but it cannot inspect the cross-origin response. The successful completion
+ * of fetch tells us the POST completed; Drive is the permanent store.
+ */
+async function uploadPhoto(file){
+
+  const base64 =
+    await fileToBase64(
+      file
+    );
+
+
+  const body =
+    new URLSearchParams();
+
+  body.set(
+    'service',
+    'photos'
+  );
+
+  body.set(
+    'action',
+    'upload'
+  );
+
+  body.set(
+    'fileName',
+    file.name ||
+    (
+      'SGT26-' +
+      Date.now() +
+      '.jpg'
+    )
+  );
+
+  body.set(
+    'mimeType',
+    file.type ||
+    'image/jpeg'
+  );
+
+  body.set(
+    'base64',
+    base64
+  );
+
+
+  await fetch(
+    API_URL,
+    {
+      method:
+        'POST',
+
+      mode:
+        'no-cors',
+
+      body:
+        body
+    }
+  );
+}
+
+
+function addLocalPreview(
+  file,
+  label
+){
+
+  const url =
+    URL.createObjectURL(
+      file
+    );
+
+
+  const tile =
+    document.createElement(
+      'button'
+    );
+
+  tile.type =
+    'button';
+
+  tile.className =
+    'tile';
+
+  tile.dataset.category =
+    'round1';
+
+  tile.dataset.url =
+    url;
+
+  tile.dataset.caption =
+    label;
+
+
+  tile.innerHTML =
+    `<img src="${url}" alt=""><span class="meta">${label}</span>`;
+
+
+  gallery.prepend(
+    tile
+  );
+}
+
+
+async function uploadFiles(
+  files,
+  sourceLabel
+){
+
+  const selected =
+    [...files]
+      .filter(
+        file =>
+          String(
+            file.type || ''
+          )
+            .startsWith(
+              'image/'
+            )
+      );
+
+
+  if (!selected.length) {
+    return;
+  }
+
+
+  takePhotoBtn.disabled =
+    true;
+
+  choosePhotosBtn.disabled =
+    true;
+
+
+  try {
+
+    for (
+      let index = 0;
+      index < selected.length;
+      index++
+    ) {
+
+      const file =
+        selected[index];
+
+
+      setStatus(
+        selected.length === 1
+          ? 'Uploading photo to Drive…'
+          : (
+              'Uploading ' +
+              (index + 1) +
+              ' of ' +
+              selected.length +
+              ' photos…'
+            )
+      );
+
+
+      await uploadPhoto(
+        file
+      );
+
+
+      addLocalPreview(
+        file,
+        sourceLabel
+      );
+    }
+
+
+    setStatus(
+      selected.length === 1
+        ? '✓ Photo uploaded to Tour Drive.'
+        : (
+            '✓ ' +
+            selected.length +
+            ' photos uploaded to Tour Drive.'
+          ),
+      'ok'
+    );
+
+  } catch (error) {
+
+    setStatus(
+      'Upload failed: ' +
+      (
+        error.message ||
+        error
+      ),
+      'error'
+    );
+
+  } finally {
+
+    takePhotoBtn.disabled =
+      false;
+
+    choosePhotosBtn.disabled =
+      false;
+
+    cameraInput.value =
+      '';
+
+    galleryInput.value =
+      '';
+  }
+}
+
+
+takePhotoBtn.addEventListener(
+  'click',
+  ()=>{
+
+    clearStatus();
+
+    cameraInput.click();
+  }
+);
+
+
+choosePhotosBtn.addEventListener(
+  'click',
+  ()=>{
+
+    clearStatus();
+
+    galleryInput.click();
+  }
+);
+
+
+cameraInput.addEventListener(
+  'change',
+  ()=>{
+
+    uploadFiles(
+      cameraInput.files,
+      'Camera · just now'
+    );
+  }
+);
+
+
+galleryInput.addEventListener(
+  'change',
+  ()=>{
+
+    uploadFiles(
+      galleryInput.files,
+      'Gallery upload'
+    );
+  }
+);
+
+
+document.querySelectorAll(
+  '.chip'
+)
+  .forEach(
+    btn=>{
+
+      btn.addEventListener(
+        'click',
+        ()=>{
+
+          document.querySelectorAll(
+            '.chip'
+          )
+            .forEach(
+              b =>
+                b.classList.remove(
+                  'active'
+                )
+            );
+
+
+          btn.classList.add(
+            'active'
+          );
+
+
+          const filter =
+            btn.dataset.filter;
+
+
+          [...gallery.children]
+            .forEach(
+              tile=>{
+
+                tile.style.display =
+                  (
+                    filter === 'all' ||
+                    tile.dataset.category === filter
+                  )
+                    ? 'block'
+                    : 'none';
+              }
+            );
+        }
+      );
+    }
+  );
+
+
+gallery.addEventListener(
+  'click',
+  event=>{
+
+    const tile =
+      event.target.closest(
+        '.tile'
+      );
+
+
+    if (
+      !tile ||
+      !tile.dataset.url
+    ) {
+      return;
+    }
+
+
+    lightboxImg.src =
+      tile.dataset.url;
+
+
+    lightboxCaption.textContent =
+      tile.dataset.caption || '';
+
+
+    lightbox.classList.add(
+      'open'
+    );
+
+
+    lightbox.setAttribute(
+      'aria-hidden',
+      'false'
+    );
+  }
+);
+
 
 function closeLightbox(){
-  lightbox.classList.remove('open');
-  lightbox.setAttribute('aria-hidden','true');
-  lightboxImg.removeAttribute('src');
+
+  lightbox.classList.remove(
+    'open'
+  );
+
+
+  lightbox.setAttribute(
+    'aria-hidden',
+    'true'
+  );
+
+
+  lightboxImg.removeAttribute(
+    'src'
+  );
 }
 
-document.getElementById('lightboxClose').addEventListener('click',closeLightbox);
-lightbox.addEventListener('click',event=>{
-  if(event.target===lightbox) closeLightbox();
-});
+
+document.getElementById(
+  'lightboxClose'
+)
+  .addEventListener(
+    'click',
+    closeLightbox
+  );
+
+
+lightbox.addEventListener(
+  'click',
+  event=>{
+
+    if (
+      event.target === lightbox
+    ) {
+      closeLightbox();
+    }
+  }
+);
 </script>
 </body>
 </html>
