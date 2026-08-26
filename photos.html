@@ -19,13 +19,12 @@
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--navy2);font-family:Arial,Helvetica,sans-serif;color:var(--navy)}
 body{min-height:100vh}
+button{font:inherit}
 .app{max-width:680px;margin:0 auto;background:var(--cream);min-height:100vh}
 
 .hero{
   background:linear-gradient(180deg,#112844 0%,#0d1b36 100%);
-  color:white;
-  border-bottom:3px solid var(--orange);
-  padding:14px 16px 12px;
+  color:white;border-bottom:3px solid var(--orange);padding:14px 16px 12px
 }
 .heroRow{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .hero h1{margin:0;font-size:24px;line-height:1}
@@ -36,32 +35,31 @@ body{min-height:100vh}
   font-size:20px;font-weight:900
 }
 
+.identityBar{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:8px 12px;background:#0a1929;color:white;border-bottom:1px solid rgba(255,255,255,.12)
+}
+.identityBar span{font-size:11px;font-weight:900;letter-spacing:.4px}
+.identityBar button{
+  border:1px solid var(--teal);background:transparent;color:#fff;border-radius:999px;
+  padding:6px 10px;font-size:11px;font-weight:900
+}
+
 .actions{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-  padding:12px;
-  background:#fbf7ef;
-  border-bottom:1px solid var(--line)
+  display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px;
+  background:#fbf7ef;border-bottom:1px solid var(--line)
 }
 .actions button{
-  min-height:50px;
-  border-radius:10px;
-  border:2px solid var(--teal);
-  font-size:14px;
-  font-weight:900
+  min-height:50px;border-radius:10px;border:2px solid var(--teal);
+  font-size:14px;font-weight:900
 }
 .actions button:disabled{opacity:.55}
 .primary{background:var(--teal);color:white}
 .secondary{background:transparent;color:var(--navy)}
 
 .uploadStatus{
-  display:none;
-  padding:9px 12px;
-  background:#eef3f3;
-  border-bottom:1px solid var(--line);
-  font-size:12px;
-  font-weight:900;
+  display:none;padding:9px 12px;background:#eef3f3;border-bottom:1px solid var(--line);
+  font-size:12px;font-weight:900
 }
 .uploadStatus.show{display:block}
 .uploadStatus.ok{color:#08715c}
@@ -82,8 +80,7 @@ body{min-height:100vh}
   display:grid;grid-template-columns:repeat(3,1fr);gap:5px;padding:5px;background:#e9e2d7
 }
 .tile{
-  position:relative;aspect-ratio:1/1;border:0;padding:0;overflow:hidden;background:#d2d8dc;
-  cursor:pointer
+  position:relative;aspect-ratio:1/1;border:0;padding:0;overflow:hidden;background:#d2d8dc;cursor:pointer
 }
 .tile img{width:100%;height:100%;object-fit:cover;display:block}
 .tile .meta{
@@ -105,6 +102,48 @@ body{min-height:100vh}
   color:var(--muted);font-size:12px;font-weight:800;line-height:1.35
 }
 
+.hiddenInput{
+  position:absolute;width:1px;height:1px;opacity:0;pointer-events:none
+}
+
+/* Identity chooser */
+.overlay{
+  position:fixed;inset:0;background:rgba(2,9,16,.84);display:none;align-items:flex-end;
+  justify-content:center;z-index:40
+}
+.overlay.open{display:flex}
+.sheet{
+  width:min(100%,680px);background:var(--cream);border-radius:18px 18px 0 0;
+  padding:16px;padding-bottom:calc(16px + env(safe-area-inset-bottom))
+}
+.sheet h2{margin:0 0 6px;font-size:21px}
+.sheet p{margin:0 0 14px;color:var(--muted);font-size:12px;font-weight:800;line-height:1.35}
+.playerGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.playerGrid button{
+  min-height:52px;border:2px solid var(--teal);border-radius:10px;background:white;
+  color:var(--navy);font-size:18px;font-weight:900
+}
+
+/* Camera confirmation */
+.cameraSheet{
+  width:min(100%,680px);background:#05090e;color:white;border-radius:18px 18px 0 0;
+  padding:12px;padding-bottom:calc(14px + env(safe-area-inset-bottom))
+}
+.previewFrame{
+  width:100%;max-height:62vh;background:#000;border-radius:12px;overflow:hidden;
+  display:flex;align-items:center;justify-content:center
+}
+.previewFrame img{width:100%;max-height:62vh;object-fit:contain;display:block}
+.cameraCaption{padding:10px 2px 8px;font-size:12px;font-weight:900;color:#cfd7de}
+.cameraBtns{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.cameraBtns button{
+  min-height:52px;border-radius:10px;font-size:14px;font-weight:900
+}
+.retake{background:transparent;border:2px solid #fff;color:#fff}
+.another{background:var(--teal);border:2px solid var(--teal);color:#fff}
+.okBtn{background:#fff;border:2px solid #fff;color:var(--navy)}
+.cameraBtns button:disabled{opacity:.55}
+
 .lightbox{
   position:fixed;inset:0;background:#02070c;display:none;z-index:30;
   align-items:center;justify-content:center;padding:18px
@@ -121,19 +160,12 @@ body{min-height:100vh}
   color:white;font-weight:800;font-size:13px
 }
 
-.hiddenInput{
-  position:absolute;
-  width:1px;
-  height:1px;
-  opacity:0;
-  pointer-events:none;
-}
-
 @media(max-width:360px){
   .gallery{grid-template-columns:repeat(2,1fr)}
 }
 </style>
 </head>
+
 <body>
 
 <div class="app">
@@ -146,6 +178,11 @@ body{min-height:100vh}
       <a class="home" href="index.html" aria-label="Main Menu">⌂</a>
     </div>
   </header>
+
+  <div class="identityBar">
+    <span id="identityText">PHOTOGRAPHER: —</span>
+    <button id="changePlayerBtn" type="button">CHANGE</button>
+  </div>
 
   <section class="actions">
     <button id="takePhotoBtn" class="primary" type="button">📷 TAKE PHOTO</button>
@@ -164,41 +201,64 @@ body{min-height:100vh}
 
   <main id="gallery" class="gallery" aria-live="polite">
     <button class="tile placeholder" data-category="round1" type="button">
-      <span class="placeholderIcon">⛳</span>
-      <span class="meta">Round 1 · Las Brisas</span>
+      <span class="placeholderIcon">⛳</span><span class="meta">Round 1 · Las Brisas</span>
     </button>
     <button class="tile placeholder" data-category="offcourse" type="button">
-      <span class="placeholderIcon">🍻</span>
-      <span class="meta">Off Course · Marbella</span>
+      <span class="placeholderIcon">🍻</span><span class="meta">Off Course · Marbella</span>
     </button>
     <button class="tile placeholder" data-category="round2" type="button">
-      <span class="placeholderIcon">🏌️</span>
-      <span class="meta">Round 2 · Golf</span>
+      <span class="placeholderIcon">🏌️</span><span class="meta">Round 2 · Golf</span>
     </button>
     <button class="tile placeholder" data-category="travel" type="button">
-      <span class="placeholderIcon">✈️</span>
-      <span class="meta">Travel · Arrival</span>
+      <span class="placeholderIcon">✈️</span><span class="meta">Travel · Arrival</span>
     </button>
     <button class="tile placeholder" data-category="round1" type="button">
-      <span class="placeholderIcon">🏆</span>
-      <span class="meta">Round 1 · Leaderboard moment</span>
+      <span class="placeholderIcon">🏆</span><span class="meta">Round 1 · Leaderboard moment</span>
     </button>
     <button class="tile placeholder" data-category="offcourse" type="button">
-      <span class="placeholderIcon">🍽️</span>
-      <span class="meta">Off Course · Dinner</span>
+      <span class="placeholderIcon">🍽️</span><span class="meta">Off Course · Dinner</span>
     </button>
   </main>
 
   <div class="noteBox">
-    Drive upload test build. TAKE PHOTO uploads immediately after the camera returns. CHOOSE PHOTOS uploads each selected image to the shared Tour Photos folder.
+    Camera workflow test: after Samsung OK you now get Retake / Another / OK before the photo is finally stored in Drive.
   </div>
 </div>
 
 <input id="cameraInput" class="hiddenInput" type="file" accept="image/*" capture="environment">
 <input id="galleryInput" class="hiddenInput" type="file" accept="image/*" multiple>
 
+<!-- One-time player identity -->
+<div id="identityOverlay" class="overlay" aria-hidden="true">
+  <section class="sheet">
+    <h2>Who is using this phone?</h2>
+    <p>This is remembered on this phone and used in every photo filename.</p>
+    <div class="playerGrid">
+      <button data-player="PGB" type="button">PGB</button>
+      <button data-player="DCM" type="button">DCM</button>
+      <button data-player="STU" type="button">STU</button>
+      <button data-player="GEN" type="button">GEN</button>
+    </div>
+  </section>
+</div>
+
+<!-- Camera confirmation -->
+<div id="cameraOverlay" class="overlay" aria-hidden="true">
+  <section class="cameraSheet">
+    <div class="previewFrame">
+      <img id="cameraPreview" alt="Captured photo preview">
+    </div>
+    <div id="cameraCaption" class="cameraCaption">Ready to save.</div>
+    <div class="cameraBtns">
+      <button id="retakeBtn" class="retake" type="button">↻ RETAKE</button>
+      <button id="anotherBtn" class="another" type="button">＋ ANOTHER</button>
+      <button id="okBtn" class="okBtn" type="button">✓ OK</button>
+    </div>
+  </section>
+</div>
+
 <div id="lightbox" class="lightbox" aria-hidden="true">
-  <button id="lightboxClose" class="lightboxClose" type="button" aria-label="Close">×</button>
+  <button id="lightboxClose" class="lightboxClose" type="button">×</button>
   <img id="lightboxImg" alt="">
   <div id="lightboxCaption" class="lightboxCaption"></div>
 </div>
@@ -207,483 +267,327 @@ body{min-height:100vh}
 const API_URL =
   "https://script.google.com/macros/s/AKfycbz06cod2GzirOUT7HCyMLgzF9RLJE8psZQqEQFSzrKut3fYMGVsRicuEutsFabVNelm/exec";
 
-const gallery =
-  document.getElementById('gallery');
+const PLAYER_KEY = 'sgt26Photographer';
 
-const cameraInput =
-  document.getElementById('cameraInput');
+const gallery = document.getElementById('gallery');
+const cameraInput = document.getElementById('cameraInput');
+const galleryInput = document.getElementById('galleryInput');
+const takePhotoBtn = document.getElementById('takePhotoBtn');
+const choosePhotosBtn = document.getElementById('choosePhotosBtn');
+const statusEl = document.getElementById('uploadStatus');
 
-const galleryInput =
-  document.getElementById('galleryInput');
+const identityOverlay = document.getElementById('identityOverlay');
+const identityText = document.getElementById('identityText');
 
-const takePhotoBtn =
-  document.getElementById('takePhotoBtn');
+const cameraOverlay = document.getElementById('cameraOverlay');
+const cameraPreview = document.getElementById('cameraPreview');
+const cameraCaption = document.getElementById('cameraCaption');
+const retakeBtn = document.getElementById('retakeBtn');
+const anotherBtn = document.getElementById('anotherBtn');
+const okBtn = document.getElementById('okBtn');
 
-const choosePhotosBtn =
-  document.getElementById('choosePhotosBtn');
+const lightbox = document.getElementById('lightbox');
+const lightboxImg = document.getElementById('lightboxImg');
+const lightboxCaption = document.getElementById('lightboxCaption');
 
-const statusEl =
-  document.getElementById('uploadStatus');
-
-const lightbox =
-  document.getElementById('lightbox');
-
-const lightboxImg =
-  document.getElementById('lightboxImg');
-
-const lightboxCaption =
-  document.getElementById('lightboxCaption');
-
+let photographer = '';
+let pendingCameraFile = null;
+let pendingPreviewUrl = '';
 
 function setStatus(text,type=''){
-
-  statusEl.textContent =
-    text;
-
-  statusEl.className =
-    'uploadStatus show' +
-    (type ? ' ' + type : '');
+  statusEl.textContent = text;
+  statusEl.className = 'uploadStatus show' + (type ? ' ' + type : '');
 }
-
 
 function clearStatus(){
-
-  statusEl.textContent =
-    '';
-
-  statusEl.className =
-    'uploadStatus';
+  statusEl.textContent = '';
+  statusEl.className = 'uploadStatus';
 }
 
+function openIdentityChooser(){
+  identityOverlay.classList.add('open');
+  identityOverlay.setAttribute('aria-hidden','false');
+}
+
+function closeIdentityChooser(){
+  identityOverlay.classList.remove('open');
+  identityOverlay.setAttribute('aria-hidden','true');
+}
+
+function setPhotographer(player){
+  photographer = player;
+  localStorage.setItem(PLAYER_KEY, player);
+  identityText.textContent = 'PHOTOGRAPHER: ' + player;
+  closeIdentityChooser();
+}
+
+document.querySelectorAll('[data-player]').forEach(btn=>{
+  btn.addEventListener('click',()=>setPhotographer(btn.dataset.player));
+});
+
+document.getElementById('changePlayerBtn').addEventListener('click',openIdentityChooser);
+
+(function initIdentity(){
+  const saved = String(localStorage.getItem(PLAYER_KEY) || '').toUpperCase();
+  if(['PGB','DCM','STU','GEN'].includes(saved)){
+    setPhotographer(saved);
+  }else{
+    openIdentityChooser();
+  }
+})();
+
+function pad2(n){
+  return String(n).padStart(2,'0');
+}
+
+function extensionFor(file){
+  const type = String(file.type || '').toLowerCase();
+  if(type === 'image/png') return 'png';
+  if(type === 'image/heic') return 'heic';
+  if(type === 'image/heif') return 'heif';
+  if(type === 'image/webp') return 'webp';
+  return 'jpg';
+}
+
+function buildPhotoName(file){
+  const d = new Date();
+  const date =
+    d.getFullYear() +
+    pad2(d.getMonth()+1) +
+    pad2(d.getDate());
+
+  const time =
+    pad2(d.getHours()) +
+    pad2(d.getMinutes()) +
+    pad2(d.getSeconds());
+
+  return `SGT26-${date}-${time}-${photographer || 'UNK'}.${extensionFor(file)}`;
+}
 
 function fileToBase64(file){
+  return new Promise((resolve,reject)=>{
+    const reader = new FileReader();
 
-  return new Promise(
-    (resolve,reject)=>{
+    reader.onload = ()=>{
+      const result = String(reader.result || '');
+      const comma = result.indexOf(',');
+      resolve(comma >= 0 ? result.slice(comma + 1) : result);
+    };
 
-      const reader =
-        new FileReader();
-
-      reader.onload =
-        ()=>{
-
-          const result =
-            String(
-              reader.result || ''
-            );
-
-          const comma =
-            result.indexOf(',');
-
-          resolve(
-            comma >= 0
-              ? result.slice(comma + 1)
-              : result
-          );
-        };
-
-      reader.onerror =
-        ()=>reject(
-          new Error(
-            'Unable to read photo.'
-          )
-        );
-
-      reader.readAsDataURL(
-        file
-      );
-    }
-  );
+    reader.onerror = ()=>reject(new Error('Unable to read photo.'));
+    reader.readAsDataURL(file);
+  });
 }
 
-
-/**
- * Cross-origin POST deliberately uses no-cors.
- *
- * The browser is allowed to send a normal HTML-style POST to Apps Script,
- * but it cannot inspect the cross-origin response. The successful completion
- * of fetch tells us the POST completed; Drive is the permanent store.
- */
 async function uploadPhoto(file){
+  const base64 = await fileToBase64(file);
+  const body = new URLSearchParams();
 
-  const base64 =
-    await fileToBase64(
-      file
-    );
+  body.set('service','photos');
+  body.set('action','upload');
+  body.set('fileName',buildPhotoName(file));
+  body.set('mimeType',file.type || 'image/jpeg');
+  body.set('base64',base64);
 
-
-  const body =
-    new URLSearchParams();
-
-  body.set(
-    'service',
-    'photos'
-  );
-
-  body.set(
-    'action',
-    'upload'
-  );
-
-  body.set(
-    'fileName',
-    file.name ||
-    (
-      'SGT26-' +
-      Date.now() +
-      '.jpg'
-    )
-  );
-
-  body.set(
-    'mimeType',
-    file.type ||
-    'image/jpeg'
-  );
-
-  body.set(
-    'base64',
-    base64
-  );
-
-
-  await fetch(
-    API_URL,
-    {
-      method:
-        'POST',
-
-      mode:
-        'no-cors',
-
-      body:
-        body
-    }
-  );
+  await fetch(API_URL,{
+    method:'POST',
+    mode:'no-cors',
+    body
+  });
 }
 
+function addLocalPreview(file,label){
+  const url = URL.createObjectURL(file);
+  const tile = document.createElement('button');
 
-function addLocalPreview(
-  file,
-  label
-){
+  tile.type = 'button';
+  tile.className = 'tile';
+  tile.dataset.category = 'round1';
+  tile.dataset.url = url;
+  tile.dataset.caption = label;
 
-  const url =
-    URL.createObjectURL(
-      file
-    );
-
-
-  const tile =
-    document.createElement(
-      'button'
-    );
-
-  tile.type =
-    'button';
-
-  tile.className =
-    'tile';
-
-  tile.dataset.category =
-    'round1';
-
-  tile.dataset.url =
-    url;
-
-  tile.dataset.caption =
-    label;
-
-
-  tile.innerHTML =
-    `<img src="${url}" alt=""><span class="meta">${label}</span>`;
-
-
-  gallery.prepend(
-    tile
-  );
+  tile.innerHTML = `<img src="${url}" alt=""><span class="meta">${label}</span>`;
+  gallery.prepend(tile);
 }
 
+function disableCameraActions(disabled){
+  retakeBtn.disabled = disabled;
+  anotherBtn.disabled = disabled;
+  okBtn.disabled = disabled;
+  takePhotoBtn.disabled = disabled;
+  choosePhotosBtn.disabled = disabled;
+}
 
-async function uploadFiles(
-  files,
-  sourceLabel
-){
-
-  const selected =
-    [...files]
-      .filter(
-        file =>
-          String(
-            file.type || ''
-          )
-            .startsWith(
-              'image/'
-            )
-      );
-
-
-  if (!selected.length) {
-    return;
+function clearPendingCamera(){
+  if(pendingPreviewUrl){
+    URL.revokeObjectURL(pendingPreviewUrl);
   }
+  pendingPreviewUrl = '';
+  pendingCameraFile = null;
+  cameraPreview.removeAttribute('src');
+  cameraInput.value = '';
+}
 
+function closeCameraOverlay(){
+  cameraOverlay.classList.remove('open');
+  cameraOverlay.setAttribute('aria-hidden','true');
+}
 
-  takePhotoBtn.disabled =
-    true;
+function showCameraPreview(file){
+  clearPendingCamera();
 
-  choosePhotosBtn.disabled =
-    true;
+  pendingCameraFile = file;
+  pendingPreviewUrl = URL.createObjectURL(file);
+  cameraPreview.src = pendingPreviewUrl;
+  cameraCaption.textContent = 'Ready to save as ' + buildPhotoName(file);
 
+  cameraOverlay.classList.add('open');
+  cameraOverlay.setAttribute('aria-hidden','false');
+}
 
-  try {
+function reopenCamera(){
+  closeCameraOverlay();
+  clearPendingCamera();
+  setTimeout(()=>cameraInput.click(),120);
+}
 
-    for (
-      let index = 0;
-      index < selected.length;
-      index++
-    ) {
+cameraInput.addEventListener('change',()=>{
+  const file = cameraInput.files && cameraInput.files[0];
+  if(file) showCameraPreview(file);
+});
 
-      const file =
-        selected[index];
+takePhotoBtn.addEventListener('click',()=>{
+  clearStatus();
+  cameraInput.click();
+});
 
+retakeBtn.addEventListener('click',()=>{
+  reopenCamera();
+});
+
+async function savePendingCamera(thenAnother){
+  if(!pendingCameraFile) return;
+
+  disableCameraActions(true);
+  cameraCaption.textContent = 'Uploading to Tour Drive…';
+
+  try{
+    const file = pendingCameraFile;
+    await uploadPhoto(file);
+
+    addLocalPreview(
+      file,
+      'Camera · ' + (photographer || 'UNK')
+    );
+
+    setStatus('✓ Photo uploaded to Tour Drive.','ok');
+
+    closeCameraOverlay();
+    clearPendingCamera();
+
+    if(thenAnother){
+      setTimeout(()=>cameraInput.click(),180);
+    }
+
+  }catch(error){
+    cameraCaption.textContent = 'Upload failed — try again.';
+    setStatus(
+      'Upload failed: ' + (error.message || error),
+      'error'
+    );
+  }finally{
+    disableCameraActions(false);
+  }
+}
+
+anotherBtn.addEventListener('click',()=>savePendingCamera(true));
+okBtn.addEventListener('click',()=>savePendingCamera(false));
+
+choosePhotosBtn.addEventListener('click',()=>{
+  clearStatus();
+  galleryInput.click();
+});
+
+galleryInput.addEventListener('change',async()=>{
+  const selected = [...galleryInput.files]
+    .filter(file=>String(file.type || '').startsWith('image/'));
+
+  if(!selected.length) return;
+
+  takePhotoBtn.disabled = true;
+  choosePhotosBtn.disabled = true;
+
+  try{
+    for(let i=0;i<selected.length;i++){
+      const file = selected[i];
 
       setStatus(
         selected.length === 1
           ? 'Uploading photo to Drive…'
-          : (
-              'Uploading ' +
-              (index + 1) +
-              ' of ' +
-              selected.length +
-              ' photos…'
-            )
+          : `Uploading ${i+1} of ${selected.length} photos…`
       );
 
-
-      await uploadPhoto(
-        file
-      );
-
-
-      addLocalPreview(
-        file,
-        sourceLabel
-      );
+      await uploadPhoto(file);
+      addLocalPreview(file,'Gallery · ' + (photographer || 'UNK'));
     }
-
 
     setStatus(
       selected.length === 1
         ? '✓ Photo uploaded to Tour Drive.'
-        : (
-            '✓ ' +
-            selected.length +
-            ' photos uploaded to Tour Drive.'
-          ),
+        : `✓ ${selected.length} photos uploaded to Tour Drive.`,
       'ok'
     );
 
-  } catch (error) {
-
+  }catch(error){
     setStatus(
-      'Upload failed: ' +
-      (
-        error.message ||
-        error
-      ),
+      'Upload failed: ' + (error.message || error),
       'error'
     );
-
-  } finally {
-
-    takePhotoBtn.disabled =
-      false;
-
-    choosePhotosBtn.disabled =
-      false;
-
-    cameraInput.value =
-      '';
-
-    galleryInput.value =
-      '';
+  }finally{
+    takePhotoBtn.disabled = false;
+    choosePhotosBtn.disabled = false;
+    galleryInput.value = '';
   }
-}
+});
 
+document.querySelectorAll('.chip').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.chip').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
 
-takePhotoBtn.addEventListener(
-  'click',
-  ()=>{
+    const filter = btn.dataset.filter;
 
-    clearStatus();
+    [...gallery.children].forEach(tile=>{
+      tile.style.display =
+        (filter === 'all' || tile.dataset.category === filter)
+          ? 'block'
+          : 'none';
+    });
+  });
+});
 
-    cameraInput.click();
-  }
-);
+gallery.addEventListener('click',event=>{
+  const tile = event.target.closest('.tile');
+  if(!tile || !tile.dataset.url) return;
 
-
-choosePhotosBtn.addEventListener(
-  'click',
-  ()=>{
-
-    clearStatus();
-
-    galleryInput.click();
-  }
-);
-
-
-cameraInput.addEventListener(
-  'change',
-  ()=>{
-
-    uploadFiles(
-      cameraInput.files,
-      'Camera · just now'
-    );
-  }
-);
-
-
-galleryInput.addEventListener(
-  'change',
-  ()=>{
-
-    uploadFiles(
-      galleryInput.files,
-      'Gallery upload'
-    );
-  }
-);
-
-
-document.querySelectorAll(
-  '.chip'
-)
-  .forEach(
-    btn=>{
-
-      btn.addEventListener(
-        'click',
-        ()=>{
-
-          document.querySelectorAll(
-            '.chip'
-          )
-            .forEach(
-              b =>
-                b.classList.remove(
-                  'active'
-                )
-            );
-
-
-          btn.classList.add(
-            'active'
-          );
-
-
-          const filter =
-            btn.dataset.filter;
-
-
-          [...gallery.children]
-            .forEach(
-              tile=>{
-
-                tile.style.display =
-                  (
-                    filter === 'all' ||
-                    tile.dataset.category === filter
-                  )
-                    ? 'block'
-                    : 'none';
-              }
-            );
-        }
-      );
-    }
-  );
-
-
-gallery.addEventListener(
-  'click',
-  event=>{
-
-    const tile =
-      event.target.closest(
-        '.tile'
-      );
-
-
-    if (
-      !tile ||
-      !tile.dataset.url
-    ) {
-      return;
-    }
-
-
-    lightboxImg.src =
-      tile.dataset.url;
-
-
-    lightboxCaption.textContent =
-      tile.dataset.caption || '';
-
-
-    lightbox.classList.add(
-      'open'
-    );
-
-
-    lightbox.setAttribute(
-      'aria-hidden',
-      'false'
-    );
-  }
-);
-
+  lightboxImg.src = tile.dataset.url;
+  lightboxCaption.textContent = tile.dataset.caption || '';
+  lightbox.classList.add('open');
+  lightbox.setAttribute('aria-hidden','false');
+});
 
 function closeLightbox(){
-
-  lightbox.classList.remove(
-    'open'
-  );
-
-
-  lightbox.setAttribute(
-    'aria-hidden',
-    'true'
-  );
-
-
-  lightboxImg.removeAttribute(
-    'src'
-  );
+  lightbox.classList.remove('open');
+  lightbox.setAttribute('aria-hidden','true');
+  lightboxImg.removeAttribute('src');
 }
 
+document.getElementById('lightboxClose').addEventListener('click',closeLightbox);
 
-document.getElementById(
-  'lightboxClose'
-)
-  .addEventListener(
-    'click',
-    closeLightbox
-  );
-
-
-lightbox.addEventListener(
-  'click',
-  event=>{
-
-    if (
-      event.target === lightbox
-    ) {
-      closeLightbox();
-    }
-  }
-);
+lightbox.addEventListener('click',event=>{
+  if(event.target === lightbox) closeLightbox();
+});
 </script>
+
 </body>
 </html>
