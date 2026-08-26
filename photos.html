@@ -439,7 +439,7 @@ function showCameraPreview(file){
   pendingCameraFile = file;
   pendingPreviewUrl = URL.createObjectURL(file);
   cameraPreview.src = pendingPreviewUrl;
-  cameraCaption.textContent = 'Ready to save as ' + buildPhotoName(file);
+  cameraCaption.textContent = 'Ready: ' + buildPhotoName(file);
 
   cameraOverlay.classList.add('open');
   cameraOverlay.setAttribute('aria-hidden','false');
@@ -465,7 +465,59 @@ retakeBtn.addEventListener('click',()=>{
   reopenCamera();
 });
 
-async function savePendingCamera(thenAnother){
+const backgroundUploads = new Set();
+
+function queueBackgroundUpload(file){
+  const uploadTask = (async()=>{
+    try{
+      await uploadPhoto(file);
+      addLocalPreview(file,'Camera · ' + (photographer || 'UNK'));
+      setStatus('✓ Previous photo uploaded to Tour Drive.','ok');
+    }catch(error){
+      setStatus(
+        '⚠ A queued photo failed to upload: ' + (error.message || error),
+        'error'
+      );
+    }
+  })();
+
+  backgroundUploads.add(uploadTask);
+  uploadTask.finally(()=>backgroundUploads.delete(uploadTask));
+}
+
+function takePendingFile(){
+  const file = pendingCameraFile;
+
+  // Detach the current capture from the preview state without destroying
+  // the File object. A queued upload can safely retain and use it.
+  if(pendingPreviewUrl){
+    URL.revokeObjectURL(pendingPreviewUrl);
+  }
+
+  pendingPreviewUrl = '';
+  pendingCameraFile = null;
+  cameraPreview.removeAttribute('src');
+  cameraInput.value = '';
+
+  return file;
+}
+
+function savePendingCameraInBackgroundAndTakeAnother(){
+  if(!pendingCameraFile) return;
+
+  const file = takePendingFile();
+
+  closeCameraOverlay();
+  setStatus('Photo queued — opening camera…');
+
+  // Start the upload, but deliberately do NOT await it.
+  queueBackgroundUpload(file);
+
+  // Reopen the native camera immediately.
+  setTimeout(()=>cameraInput.click(),80);
+}
+
+async function savePendingCameraAndFinish(){
   if(!pendingCameraFile) return;
 
   disableCameraActions(true);
@@ -485,10 +537,6 @@ async function savePendingCamera(thenAnother){
     closeCameraOverlay();
     clearPendingCamera();
 
-    if(thenAnother){
-      setTimeout(()=>cameraInput.click(),180);
-    }
-
   }catch(error){
     cameraCaption.textContent = 'Upload failed — try again.';
     setStatus(
@@ -500,8 +548,8 @@ async function savePendingCamera(thenAnother){
   }
 }
 
-anotherBtn.addEventListener('click',()=>savePendingCamera(true));
-okBtn.addEventListener('click',()=>savePendingCamera(false));
+anotherBtn.addEventListener('click',savePendingCameraInBackgroundAndTakeAnother);
+okBtn.addEventListener('click',savePendingCameraAndFinish);
 
 choosePhotosBtn.addEventListener('click',()=>{
   clearStatus();
