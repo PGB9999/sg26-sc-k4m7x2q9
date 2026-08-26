@@ -175,7 +175,7 @@ button{font:inherit}
         <h1>Tour Photos</h1>
         <small>Spanish Golf Tour 2026</small>
       </div>
-      <a class="home" href="index.html" aria-label="Main Menu">⌂</a>
+      <a id="homeBtn" class="home" href="index.html" aria-label="Main Menu">⌂</a>
     </div>
   </header>
 
@@ -257,6 +257,19 @@ button{font:inherit}
   </section>
 </div>
 
+
+<!-- Navigation guard while photos are still uploading -->
+<div id="savingOverlay" class="overlay" aria-hidden="true">
+  <section class="sheet" style="text-align:center">
+    <h2>Saving Photos</h2>
+    <p id="savingMessage" style="font-size:14px">
+      Please wait while we save your photos to the Tour Drive.<br>
+      This should only take a moment.
+    </p>
+    <div style="font-size:34px;margin:12px 0">⏳</div>
+  </section>
+</div>
+
 <div id="lightbox" class="lightbox" aria-hidden="true">
   <button id="lightboxClose" class="lightboxClose" type="button">×</button>
   <img id="lightboxImg" alt="">
@@ -275,6 +288,9 @@ const galleryInput = document.getElementById('galleryInput');
 const takePhotoBtn = document.getElementById('takePhotoBtn');
 const choosePhotosBtn = document.getElementById('choosePhotosBtn');
 const statusEl = document.getElementById('uploadStatus');
+const homeBtn = document.getElementById('homeBtn');
+const savingOverlay = document.getElementById('savingOverlay');
+const savingMessage = document.getElementById('savingMessage');
 
 const identityOverlay = document.getElementById('identityOverlay');
 const identityText = document.getElementById('identityText');
@@ -466,30 +482,66 @@ retakeBtn.addEventListener('click',()=>{
 });
 
 const backgroundUploads = new Set();
+let pendingExitUrl = '';
+
+function updateQueueStatus(){
+  const count = backgroundUploads.size;
+
+  if(count > 0){
+    setStatus(
+      count === 1
+        ? 'Saving 1 photo to Tour Drive…'
+        : `Saving ${count} photos to Tour Drive…`
+    );
+  }
+}
+
+function maybeCompletePendingExit(){
+  if(backgroundUploads.size !== 0 || !pendingExitUrl) return;
+
+  savingMessage.innerHTML = 'All photos saved ✓';
+  const destination = pendingExitUrl;
+  pendingExitUrl = '';
+
+  setTimeout(()=>{
+    window.location.href = destination;
+  },250);
+}
 
 function queueBackgroundUpload(file){
   const uploadTask = (async()=>{
     try{
       await uploadPhoto(file);
       addLocalPreview(file,'Camera · ' + (photographer || 'UNK'));
-      setStatus('✓ Previous photo uploaded to Tour Drive.','ok');
     }catch(error){
       setStatus(
         '⚠ A queued photo failed to upload: ' + (error.message || error),
         'error'
       );
+      throw error;
     }
   })();
 
   backgroundUploads.add(uploadTask);
-  uploadTask.finally(()=>backgroundUploads.delete(uploadTask));
+  updateQueueStatus();
+
+  uploadTask.finally(()=>{
+    backgroundUploads.delete(uploadTask);
+
+    if(backgroundUploads.size === 0){
+      if(!statusEl.classList.contains('error')){
+        setStatus('✓ All photos saved to Tour Drive.','ok');
+      }
+      maybeCompletePendingExit();
+    }else{
+      updateQueueStatus();
+    }
+  }).catch(()=>{});
 }
 
 function takePendingFile(){
   const file = pendingCameraFile;
 
-  // Detach the current capture from the preview state without destroying
-  // the File object. A queued upload can safely retain and use it.
   if(pendingPreviewUrl){
     URL.revokeObjectURL(pendingPreviewUrl);
   }
@@ -502,54 +554,32 @@ function takePendingFile(){
   return file;
 }
 
-function savePendingCameraInBackgroundAndTakeAnother(){
-  if(!pendingCameraFile) return;
+function queuePendingCameraPhoto(){
+  if(!pendingCameraFile) return false;
 
   const file = takePendingFile();
+  queueBackgroundUpload(file);
+  return true;
+}
+
+function savePendingCameraInBackgroundAndTakeAnother(){
+  if(!queuePendingCameraPhoto()) return;
 
   closeCameraOverlay();
-  setStatus('Photo queued — opening camera…');
 
-  // Start the upload, but deliberately do NOT await it.
-  queueBackgroundUpload(file);
-
-  // Reopen the native camera immediately.
+  // Camera returns immediately; Drive upload continues in memory.
   setTimeout(()=>cameraInput.click(),80);
 }
 
-async function savePendingCameraAndFinish(){
-  if(!pendingCameraFile) return;
+function savePendingCameraInBackgroundAndFinish(){
+  if(!queuePendingCameraPhoto()) return;
 
-  disableCameraActions(true);
-  cameraCaption.textContent = 'Uploading to Tour Drive…';
-
-  try{
-    const file = pendingCameraFile;
-    await uploadPhoto(file);
-
-    addLocalPreview(
-      file,
-      'Camera · ' + (photographer || 'UNK')
-    );
-
-    setStatus('✓ Photo uploaded to Tour Drive.','ok');
-
-    closeCameraOverlay();
-    clearPendingCamera();
-
-  }catch(error){
-    cameraCaption.textContent = 'Upload failed — try again.';
-    setStatus(
-      'Upload failed: ' + (error.message || error),
-      'error'
-    );
-  }finally{
-    disableCameraActions(false);
-  }
+  // Return to Photos immediately; Drive upload continues in memory.
+  closeCameraOverlay();
 }
 
 anotherBtn.addEventListener('click',savePendingCameraInBackgroundAndTakeAnother);
-okBtn.addEventListener('click',savePendingCameraAndFinish);
+okBtn.addEventListener('click',savePendingCameraInBackgroundAndFinish);
 
 choosePhotosBtn.addEventListener('click',()=>{
   clearStatus();
@@ -629,6 +659,36 @@ function closeLightbox(){
   lightbox.setAttribute('aria-hidden','true');
   lightboxImg.removeAttribute('src');
 }
+
+
+function requestExit(url){
+  if(backgroundUploads.size === 0){
+    window.location.href = url;
+    return;
+  }
+
+  pendingExitUrl = url;
+  savingMessage.innerHTML =
+    'Please wait while we save your photos to the Tour Drive.<br>' +
+    'This should only take a moment.';
+
+  savingOverlay.classList.add('open');
+  savingOverlay.setAttribute('aria-hidden','false');
+}
+
+homeBtn.addEventListener('click',event=>{
+  event.preventDefault();
+  requestExit(homeBtn.href);
+});
+
+// Warn if the browser/tab itself is closed or refreshed while uploads remain.
+// Mobile browsers decide the exact wording of this system warning.
+window.addEventListener('beforeunload',event=>{
+  if(backgroundUploads.size > 0){
+    event.preventDefault();
+    event.returnValue = '';
+  }
+});
 
 document.getElementById('lightboxClose').addEventListener('click',closeLightbox);
 
