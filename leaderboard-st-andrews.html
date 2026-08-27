@@ -37,10 +37,10 @@ html,body{
 }
 .board{
   position:absolute;
-  left:4.1%;
-  top:42.2%;
+  left:3.5%;
+  top:47.0%;
   width:58.5%;
-  height:49.5%;
+  height:46.5%;
   display:flex;
   flex-direction:column;
   background:linear-gradient(#f2bb1d,#dca10d);
@@ -51,7 +51,7 @@ html,body{
   z-index:2;
 }
 .boardTop{
-  flex:0 0 20%;
+  flex:0 0 18%;
   background:linear-gradient(#0c1a2d,#06111f);
   color:#fff;
   display:grid;
@@ -61,7 +61,7 @@ html,body{
   border-bottom:4px solid #b7890a;
 }
 .tourTitle{
-  font-size:clamp(28px,2.95vw,56px);
+  font-size:clamp(27px,2.8vw,52px);
   font-weight:1000;
   letter-spacing:1.2px;
   line-height:.95;
@@ -112,7 +112,7 @@ html,body{
   min-height:0;
   display:flex;
   flex-direction:column;
-  padding:1.05%;
+  padding:.8%;
 }
 .boardLabel{
   flex:0 0 auto;
@@ -192,7 +192,7 @@ html,body{
 .flagCell{padding:0 8px}
 .flagSvg{
   width:80%;
-  max-width:74px;
+  max-width:78px;
   aspect-ratio:5/3;
   border:2px solid rgba(16,33,59,.45);
   box-shadow:0 2px 2px rgba(0,0,0,.2);
@@ -203,7 +203,7 @@ html,body{
 }
 .playerBlock{display:flex;flex-direction:column;justify-content:center}
 .playerName{
-  font-size:clamp(28px,4.45vh,60px);
+  font-size:clamp(29px,4.6vh,62px);
   line-height:.88;
   font-weight:1000;
 }
@@ -267,8 +267,8 @@ html,body{
 
 .status{
   position:absolute;
-  left:4.6%;
-  bottom:4.3%;
+  left:3.9%;
+  bottom:2.0%;
   right:auto;
   z-index:4;
   display:flex;
@@ -356,6 +356,38 @@ html,body{
   }
   .tourTitle{
     font-size:clamp(26px,3vw,46px);
+  }
+}
+
+/* V2.3 final flower arranging */
+.board{
+  transform-origin:left bottom;
+}
+.boardTop{
+  padding-top:1%;
+  padding-bottom:1%;
+}
+.roundMeta small{
+  line-height:1;
+}
+.boardLabel{
+  margin-top:0;
+  margin-bottom:.35%;
+}
+.groupHeads>div{
+  padding-top:5px;
+  padding-bottom:5px;
+}
+.row{
+  border-top-width:3px;
+}
+.playerCode{
+  margin-top:1px;
+}
+@media(max-height:850px){
+  .board{
+    top:46%;
+    height:47%;
   }
 }
 </style>
@@ -553,7 +585,7 @@ function renderRows(items){
   const playerNames={
     PGB:'PAUL',
     DCM:'DAVID',
-    STU:'STU',
+    STU:'STUART',
     GEN:'JEANERIC'
   };
   host.innerHTML=items.map(item=>{
@@ -638,6 +670,6 @@ document.getElementById('roundSelect').value=String(currentRound);
 updateLinks();
 loadLeaderboard();
 </script>
-<!-- SGT26 St Andrews Leaderboard V2.2: mockup-matched lower-left board -->
+<!-- SGT26 St Andrews Leaderboard V2.3: final lower-left alignment pass -->
 </body>
 </html>
