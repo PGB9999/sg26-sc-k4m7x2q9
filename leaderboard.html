@@ -6,137 +6,18 @@
   <meta name="theme-color" content="#0d1b36">
   <title>Spanish Golf Tour 2026 — Leaderboard</title>
   <style>
-    :root{
-      --navy:#0d1b36;
-      --navy2:#071522;
-      --cream:#f4eddf;
-      --teal:#1aa0a4;
-      --orange:#f36b18;
-      --line:rgba(13,27,54,.16);
-      --muted:#6d7480;
-    }
-    *{box-sizing:border-box}
-    html,body{margin:0;padding:0;background:var(--navy2);font-family:Arial,Helvetica,sans-serif;color:var(--navy)}
-    body{min-height:100vh}
-    .app{max-width:860px;margin:0 auto;background:var(--cream);min-height:100vh}
-    .hero{
-      background:linear-gradient(180deg,#112844 0%,#0d1b36 100%);
-      color:white;
-      border-bottom:3px solid var(--orange);
-    }
-    .titleRow{display:grid;grid-template-columns:minmax(0,2.15fr) minmax(108px,.85fr)}
-    .titleBox,.timeBox{padding:14px 18px}
-    .timeBox{border-left:1px solid rgba(255,255,255,.18)}
-    .eyebrow{display:block;font-size:13px;letter-spacing:.8px;font-weight:900;color:#b9c6d4;margin-bottom:6px}
-    .roundSelectWrap{position:relative}
-    .roundSelect{
-      width:100%;
-      appearance:none;
-      -webkit-appearance:none;
-      border:0;
-      background:transparent;
-      color:white;
-      font-size:clamp(20px,5vw,31px);
-      line-height:1.06;
-      font-weight:900;
-      padding:0 28px 0 0;
-      outline:none;
-    }
-    .roundSelectWrap:after{
-      content:"⌄";
-      position:absolute;
-      right:0;
-      top:3px;
-      color:white;
-      font-weight:900;
-      pointer-events:none;
-    }
-    .timeBox strong{font-size:21px}
-    .golfToggle{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      background:var(--navy2);
-      border-bottom:3px solid var(--orange);
-    }
-    .golfToggle a,
-    .golfToggle span{
-      min-height:44px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-weight:900;
-      letter-spacing:.35px;
-      font-size:14px;
-      text-decoration:none;
-    }
-    .golfToggle a{color:var(--cream);background:var(--navy2)}
-    .golfToggle span{color:var(--navy);background:var(--cream)}
-    .board{padding:0}
-    .head,.row{
-      display:grid;
-      grid-template-columns:58px minmax(88px,1.35fr) 72px 78px 88px;
-      align-items:center;
-      min-width:0;
-    }
-    .head{
-      min-height:48px;
-      background:#fbf7ef;
-      border-bottom:1px solid var(--line);
-      font-size:12px;
-      font-weight:900;
-      letter-spacing:.25px;
-      text-align:center;
-    }
-    .row{
-      min-height:86px;
-      border-bottom:1px solid var(--line);
-      background:var(--cream);
-      text-align:center;
-    }
-    .pos{font-size:28px;font-weight:900}
-    .player{font-size:25px;font-weight:900;text-align:left;padding-left:8px}
-    .thru{font-size:22px;font-weight:900}
-    .pts{font-size:34px;font-weight:1000}
-    .last{
-      width:46px;height:46px;border:2px solid var(--teal);border-radius:50%;
-      display:flex;align-items:center;justify-content:center;margin:auto;
-      font-size:22px;font-weight:900;background:#fbf7ef
-    }
-    .row[data-player="PGB"] .player,.row[data-player="PGB"] .pts{color:#0d1b36}
-    .row[data-player="DCM"] .player,.row[data-player="DCM"] .pts{color:#f36b18}
-    .row[data-player="STU"] .player,.row[data-player="STU"] .pts{color:#c49a00}
-    .row[data-player="GEN"] .player,.row[data-player="GEN"] .pts{color:#7b3fb1}
-    .status{
-      background:#000;color:white;display:flex;justify-content:space-between;align-items:center;
-      gap:12px;padding:10px 14px;font-size:12px;font-weight:900;letter-spacing:.2px
-    }
-    .status strong{color:#2bc3c8}
-    .status .countdown{white-space:nowrap}
-    .footer{
-      background:var(--navy2);
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:10px;
-      padding:12px;
-      padding-bottom:calc(12px + env(safe-area-inset-bottom));
-    }
-    .footer a,.footer button{
-      min-height:54px;border-radius:12px;border:2px solid var(--teal);
-      background:transparent;color:white;font-size:16px;font-weight:900;
-      display:flex;align-items:center;justify-content:center;text-decoration:none
-    }
-    .footer button{cursor:pointer}
-    .footer button:active,.footer a:active{transform:translateY(1px)}
-    .empty{padding:38px 20px;text-align:center;color:var(--muted);font-weight:800}
-    .error{color:var(--orange)!important}
-    @media(max-width:420px){
-      .head,.row{grid-template-columns:44px minmax(72px,1.25fr) 58px 68px 70px}
-      .player{font-size:22px}
-      .pts{font-size:30px}
-      .last{width:40px;height:40px;font-size:20px}
-      .titleBox,.timeBox{padding:12px 14px}
-    }
-  </style>
+:root{--navy:#0d1b36;--navy2:#071522;--cream:#f4eddf;--teal:#1aa0a4;--orange:#f36b18;--yellow:#e1aa25;--yellow2:#d79a17;--ink:#10213b}
+*{box-sizing:border-box}html,body{margin:0;background:var(--navy2);font-family:Arial,Helvetica,sans-serif;color:var(--navy)}body{min-height:100vh}.app{max-width:860px;margin:auto;background:var(--cream);min-height:100vh}
+.hero{background:linear-gradient(180deg,#112844,#0d1b36);color:#fff;border-bottom:3px solid var(--orange)}.titleRow{display:grid;grid-template-columns:minmax(0,2.15fr) minmax(108px,.85fr)}.titleBox,.timeBox{padding:14px 18px}.timeBox{border-left:1px solid #ffffff2e}.eyebrow{display:block;font-size:13px;letter-spacing:.8px;font-weight:900;color:#b9c6d4;margin-bottom:6px}.roundSelectWrap{position:relative}.roundSelect{width:100%;appearance:none;border:0;background:transparent;color:#fff;font-size:clamp(20px,5vw,31px);font-weight:900;padding:0 28px 0 0;outline:0}.roundSelectWrap:after{content:"⌄";position:absolute;right:0;top:3px;color:#fff;font-weight:900}.timeBox strong{font-size:21px}
+.golfToggle{display:grid;grid-template-columns:1fr 1fr;background:var(--navy2);border-bottom:3px solid var(--orange)}.golfToggle a,.golfToggle span{min-height:44px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;text-decoration:none}.golfToggle a{color:var(--cream)}.golfToggle span{color:var(--navy);background:var(--cream)}
+.board{background:linear-gradient(var(--yellow),var(--yellow2));padding:12px 7px 16px;border-bottom:5px solid var(--ink)}.boardTitle{text-align:center;color:var(--ink);font-weight:1000;letter-spacing:1px;font-size:14px;margin:0 0 9px;text-transform:uppercase}.boardFrame{border:3px solid var(--ink);box-shadow:0 3px 0 #0002}
+.head,.row{display:grid;grid-template-columns:42px minmax(135px,1fr) 55px 62px 62px;align-items:stretch}.head{background:var(--ink);color:#f8f1df;font-size:11px;font-weight:1000;letter-spacing:.5px}.head>div{padding:9px 3px;border-right:1px solid #ffffff38;display:flex;align-items:center;justify-content:center}.head>div:nth-child(2){justify-content:flex-start;padding-left:8px}.head>div:last-child{border:0}
+.row{min-height:88px;border-top:2px solid #10213b73;color:var(--ink)}.row>div{border-right:2px solid #10213b59;display:flex;align-items:center;justify-content:center}.row>div:last-child{border-right:0}.pos{font-size:25px;font-weight:1000}.player{font-size:22px;font-weight:1000;justify-content:flex-start!important;padding:0 6px;gap:6px;white-space:nowrap}.flag{font-size:22px;line-height:1}.thru{font-size:17px;font-weight:1000}
+.flip{margin:8px 4px;min-height:55px!important;border:2px solid #10213b73!important;border-radius:2px;background:linear-gradient(#f5e9bd 0%,#e8d69d 49%,#d7be7d 50%,#ebd9a2 100%);box-shadow:inset 0 0 0 2px #ffffff3d,0 2px 1px #0003;font-family:"Arial Narrow",Arial,sans-serif;font-size:31px;font-weight:1000;position:relative}.flip:after{content:"";position:absolute;left:0;right:0;top:50%;height:1px;background:#10213b47}.flip span{z-index:1}.last.flip{font-size:27px}
+.empty{padding:38px 20px;text-align:center;color:var(--ink);font-weight:900}.status{background:#000;color:#fff;display:flex;justify-content:space-between;padding:10px 14px;font-size:12px;font-weight:900}.status strong{color:#2bc3c8}.error{color:var(--orange)!important}
+.footer{background:var(--navy2);display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px;padding-bottom:calc(12px + env(safe-area-inset-bottom))}.footer a,.footer button{min-height:54px;border-radius:12px;border:2px solid var(--teal);background:transparent;color:#fff;font-size:16px;font-weight:900;display:flex;align-items:center;justify-content:center;text-decoration:none}.footer button{cursor:pointer}
+@media(max-width:390px){.head,.row{grid-template-columns:36px minmax(120px,1fr) 48px 55px 55px}.player{font-size:19px;gap:4px}.flag{font-size:19px}.flip{font-size:28px;margin:7px 3px}.titleBox,.timeBox{padding:12px 14px}}
+</style>
 </head>
 <body>
 <div class="app">
@@ -168,15 +49,10 @@
   </nav>
 
   <main class="board">
-    <div class="head">
-      <div>POS</div>
-      <div style="text-align:left;padding-left:8px">PLAYER</div>
-      <div>THRU</div>
-      <div>PTS</div>
-      <div>LAST</div>
-    </div>
-    <div id="rows">
-      <div class="empty">Loading leaderboard…</div>
+    <div class="boardTitle">Spanish Golf Tour · Official Leaderboard</div>
+    <div class="boardFrame">
+      <div class="head"><div>POS</div><div>PLAYER</div><div>THRU</div><div>PTS</div><div>LAST</div></div>
+      <div id="rows"><div class="empty">Loading leaderboard…</div></div>
     </div>
   </main>
 
@@ -287,13 +163,14 @@ function renderRows(items){
     host.innerHTML='<div class="empty">No leaderboard data yet.</div>';
     return;
   }
+  const flags={PGB:'🏴',STU:'🏴',DCM:'🇿🇦',GEN:'🇩🇴'};
   host.innerHTML=items.map(item=>`
     <div class="row" data-player="${item.player}">
       <div class="pos">${item.position}</div>
-      <div class="player">${item.player}</div>
+      <div class="player"><span class="flag">${flags[item.player]||'🏳️'}</span><span>${item.player}</span></div>
       <div class="thru">${item.thru||'—'}</div>
-      <div class="pts">${item.totalPoints}</div>
-      <div class="last">${item.lastHolePoints===null?'—':item.lastHolePoints}</div>
+      <div class="flip pts"><span>${item.totalPoints}</span></div>
+      <div class="flip last"><span>${item.lastHolePoints===null?'—':item.lastHolePoints}</span></div>
     </div>
   `).join('');
 }
