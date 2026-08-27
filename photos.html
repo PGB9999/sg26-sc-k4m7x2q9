@@ -153,6 +153,13 @@ button{font:inherit}
 }
 .lightbox.open{display:flex}
 .lightbox img{max-width:100%;max-height:82vh;object-fit:contain}
+.lightboxTrash{
+  position:absolute;top:14px;right:68px;z-index:3;width:46px;height:46px;
+  border:1px solid rgba(255,255,255,.45);border-radius:50%;
+  background:rgba(0,0,0,.55);color:white;font-size:21px;
+  display:flex;align-items:center;justify-content:center
+}
+.lightboxTrash[hidden]{display:none}
 .lightboxClose{
   position:absolute;top:calc(10px + env(safe-area-inset-top));right:12px;
   width:46px;height:46px;border-radius:50%;border:2px solid white;background:rgba(0,0,0,.4);
@@ -259,6 +266,7 @@ button{font:inherit}
 </div>
 
 <div id="lightbox" class="lightbox" aria-hidden="true">
+  <button id="lightboxTrash" class="lightboxTrash" type="button" aria-label="Move photo to Bin" hidden>🗑️</button>
   <button id="lightboxClose" class="lightboxClose" type="button">×</button>
   <img id="lightboxImg" alt="">
   <div id="lightboxCaption" class="lightboxCaption"></div>
@@ -295,6 +303,9 @@ const okBtn = document.getElementById('okBtn');
 const lightbox = document.getElementById('lightbox');
 const lightboxImg = document.getElementById('lightboxImg');
 const lightboxCaption = document.getElementById('lightboxCaption');
+const lightboxTrash = document.getElementById('lightboxTrash');
+let openPhotoId = '';
+let openPhotoPhotographer = '';
 
 let photographer = '';
 let pendingCameraFile = null;
@@ -714,6 +725,7 @@ function renderDriveGallery(photos){
     tile.type='button';
     tile.className='tile';
     tile.dataset.photographer=photo.photographer || 'UNK';
+    tile.dataset.photoId=photo.id || '';
     tile.dataset.url=photo.fullUrl;
     tile.dataset.caption=formatPhotoCaption(photo);
 
@@ -752,6 +764,12 @@ gallery.addEventListener('click',event=>{
 
   lightboxImg.src = tile.dataset.url;
   lightboxCaption.textContent = tile.dataset.caption || '';
+  openPhotoId = tile.dataset.photoId || '';
+  openPhotoPhotographer = tile.dataset.photographer || '';
+
+  lightboxTrash.hidden =
+    !openPhotoId || !photographer || openPhotoPhotographer !== photographer;
+
   lightbox.classList.add('open');
   lightbox.setAttribute('aria-hidden','false');
 });
@@ -797,6 +815,28 @@ window.addEventListener('beforeunload',event=>{
 });
 
 loadDriveGallery();
+
+async function binOpenPhoto(){
+  if(!openPhotoId || !photographer || openPhotoPhotographer !== photographer) return;
+
+  const confirmed=window.confirm(
+    'Move this photo to Bin?\n\nIt will disappear from the Tour Gallery but can still be recovered from Google Drive Bin.'
+  );
+  if(!confirmed) return;
+
+  lightboxTrash.disabled=true;
+  try{
+    await apiJsonpPhotos({service:'photos',action:'trash',id:openPhotoId,photographer:photographer});
+    closeLightbox();
+    setStatus('✓ Photo moved to Drive Bin.','ok');
+    loadDriveGallery();
+  }catch(error){
+    setStatus('Unable to bin photo: '+(error.message||error),'error');
+  }finally{
+    lightboxTrash.disabled=false;
+  }
+}
+lightboxTrash.addEventListener('click',binOpenPhoto);
 
 document.getElementById('lightboxClose').addEventListener('click',closeLightbox);
 
