@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- SGT26_BUILD:RyderCup2022.5.1 -->
+<!-- SGT26_BUILD:OpenBoardScorecard1.0 -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -560,15 +560,305 @@ body.fourBallCompact .score{
   min-height:48px;
 }
 
+
+/* ============================================================
+   SGT26 Scorecard Open-Board Skin V1
+   Visual-only reskin: yellow board, navy rails, mechanical tiles.
+   ============================================================ */
+
+:root{
+  --board:#e2ad28;
+  --board2:#d89b18;
+  --boardInk:#10213b;
+  --boardSlot:#ead59b;
+}
+
+/* Keep the established Tour header / tabs exactly as the family look. */
+.hole{
+  position:relative;
+  background:linear-gradient(180deg,var(--board),var(--board2));
+  border-top:3px solid var(--boardInk);
+  border-bottom:3px solid var(--boardInk);
+  padding:6px;
+}
+.hole::before,
+.hole::after{
+  content:"";
+  position:absolute;
+  width:9px;height:9px;border-radius:50%;
+  background:#8a6a1b;border:1px solid #5f4810;
+  box-shadow:inset 1px 1px #d4b456;
+  top:6px;
+}
+.hole::before{left:6px}
+.hole::after{right:6px}
+
+.holegrid{
+  grid-template-columns:23% 1fr 1fr 1.2fr;
+  min-height:var(--hole-h);
+  border:3px solid var(--boardInk);
+  background:transparent;
+}
+.big7,
+.metric{
+  color:var(--boardInk);
+  background:transparent;
+  border-left:2px solid rgba(16,33,59,.35);
+}
+.big7{border-left:0!important;text-shadow:none}
+.big7::before{color:var(--boardInk)}
+.metric small{color:var(--boardInk);opacity:.82}
+.metric.si b{color:var(--boardInk)}
+.metric.yds{
+  margin:0;
+  background:transparent;
+  border-left:2px solid rgba(16,33,59,.35);
+}
+
+/* Mechanical number tile treatment. */
+.big7,
+.metric b,
+.score,
+.pts b,
+.total b{
+  position:relative;
+}
+.big7,
+.metric b,
+.score{
+  background:linear-gradient(
+    #f5e9bd 0%,
+    #e8d69d 49%,
+    #d7be7d 50%,
+    #ebd9a2 100%
+  );
+  border:2px solid rgba(16,33,59,.48);
+  box-shadow:
+    inset 0 0 0 2px rgba(255,255,255,.24),
+    0 2px 1px rgba(0,0,0,.16);
+}
+.big7::after,
+.metric b::after,
+.score::after{
+  content:"";
+  position:absolute;
+  left:0;right:0;top:50%;
+  height:1px;
+  background:rgba(16,33,59,.27);
+  pointer-events:none;
+}
+.big7{
+  margin:7px;
+  border-radius:2px;
+}
+.metric b{
+  min-width:64%;
+  padding:8px 6px;
+  border-radius:2px;
+}
+.score{
+  overflow:hidden;
+  border-radius:2px;
+  color:var(--boardInk);
+  font-family:"Arial Narrow",Arial,sans-serif;
+  background:linear-gradient(
+    #f5e9bd 0%,
+    #e8d69d 49%,
+    #d7be7d 50%,
+    #ebd9a2 100%
+  );
+}
+
+/* Flip animation: the upper half folds away when a score changes. */
+.score .flipFace{
+  position:relative;
+  z-index:2;
+}
+.score.flipAnimate::before{
+  content:attr(data-old);
+  position:absolute;
+  left:0;right:0;top:0;
+  height:50%;
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+  padding-bottom:0;
+  overflow:hidden;
+  background:linear-gradient(#f5e9bd,#e8d69d);
+  color:var(--boardInk);
+  font:inherit;
+  font-weight:inherit;
+  transform-origin:bottom;
+  backface-visibility:hidden;
+  z-index:4;
+  animation:sgtFlipTop .32s ease-in forwards;
+}
+.score.flipAnimate::after{
+  content:"";
+  position:absolute;
+  left:0;right:0;top:50%;
+  height:1px;
+  background:rgba(16,33,59,.32);
+  z-index:5;
+}
+@keyframes sgtFlipTop{
+  0%{transform:perspective(260px) rotateX(0deg);filter:brightness(1)}
+  55%{transform:perspective(260px) rotateX(-72deg);filter:brightness(.86)}
+  100%{transform:perspective(260px) rotateX(-90deg);filter:brightness(.72)}
+}
+
+.stable{
+  background:var(--boardInk);
+  color:#fff7df;
+  border-bottom:3px solid var(--boardInk);
+}
+.stable em{color:#ffd86a}
+
+.head{
+  background:var(--boardInk);
+  color:#fff7df;
+  border-bottom:0;
+}
+#players{
+  background:linear-gradient(180deg,var(--board),var(--board2));
+}
+.player{
+  position:relative;
+  background:transparent;
+  color:var(--boardInk);
+  border-bottom:2px solid rgba(16,33,59,.42);
+}
+.player::before{
+  content:"";
+  position:absolute;
+  width:8px;height:8px;border-radius:50%;
+  background:#8a6a1b;border:1px solid #5f4810;
+  left:3px;top:4px;
+  box-shadow:inset 1px 1px #d4b456;
+}
+.name{
+  color:var(--boardInk)!important;
+  font-family:Arial,Helvetica,sans-serif;
+  font-style:normal;
+  font-size:26px;
+  font-weight:1000;
+}
+.playerIdent{
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+.flagSvg{
+  width:30px;
+  height:20px;
+  flex:0 0 auto;
+  border:1px solid rgba(16,33,59,.5);
+  box-shadow:0 1px 1px rgba(0,0,0,.18);
+}
+.minus,.plus{
+  background:var(--boardInk);
+  border:2px solid #081525;
+  color:#fff7df;
+  border-radius:4px;
+}
+.plus{background:#0b8f94;border-color:#086d71}
+
+.shots,.pts,.total{color:var(--boardInk)}
+.shots b{color:var(--boardInk)!important}
+.pts,
+.total{
+  background:transparent;
+  color:var(--boardInk);
+  border-radius:0;
+  padding:0;
+}
+.pts b,
+.total b{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:42px;
+  margin:0 4px 3px;
+  padding:4px 2px;
+  border:2px solid rgba(16,33,59,.46);
+  border-radius:2px;
+  background:linear-gradient(
+    #f5e9bd 0%,
+    #e8d69d 49%,
+    #d7be7d 50%,
+    #ebd9a2 100%
+  );
+  color:var(--boardInk)!important;
+  box-shadow:inset 0 0 0 2px rgba(255,255,255,.2);
+}
+.pts b::after,
+.total b::after{
+  content:"";
+  position:absolute;
+  left:0;right:0;top:50%;
+  height:1px;
+  background:rgba(16,33,59,.25);
+}
+
+.status{
+  background:#050505;
+  border-top:2px solid var(--boardInk);
+}
+
+.nav{
+  background:linear-gradient(180deg,#06101d,#081625);
+}
+.nav .next{
+  background:linear-gradient(90deg,#0a8f95,#0aa1a5);
+}
+
+/* Pairings keeps the same working logic, with matching board language. */
+.pairingsBar{
+  background:var(--boardInk);
+  border-bottom:3px solid var(--orange);
+}
+.pairingsChoices button{
+  border-color:#d8a221;
+}
+.pairingsChoices button.active{
+  background:#d8a221;
+  color:var(--boardInk);
+}
+
+/* Keep the proven compact four-ball fit. */
+body.fourBallCompact .hole{
+  padding-top:4px;
+  padding-bottom:4px;
+}
+body.fourBallCompact .big7{
+  margin:4px;
+}
+body.fourBallCompact .metric b{
+  padding-top:5px;
+  padding-bottom:5px;
+}
+body.fourBallCompact .player{
+  padding-left:7px;
+  padding-right:7px;
+}
+body.fourBallCompact .pts b,
+body.fourBallCompact .total b{
+  min-height:38px;
+}
+
+@media(max-width:390px){
+  .name{font-size:22px}
+  .flagSvg{width:27px;height:18px}
+}
 </style>
 <script>
-  const APP_VERSION = "RyderCup2022.5.1";
-  console.info("SGT26 Scorecard", APP_VERSION);
+  const APP_VERSION = "OpenBoardScorecard1.0";
+  console.info("SGT26 Scorecard Open Board", APP_VERSION);
 </script>
 </head>
 <body>
 <div class="app">
-  <img class="banner" src="sgt26-banner.png?v=RyderCup2022.5.1" alt="Spanish Golf Tour 2026">
+  <img class="banner" src="sgt26-banner.png?v=OpenBoardScorecard1.0" alt="Spanish Golf Tour 2026">
   <div class="roundbar roundbarSimple">
     <div class="roundCourse">
       <span id="roundLabel">ROUND 1</span>
@@ -789,6 +1079,43 @@ function loadPairingsConfig(){
   });
 }
 
+
+function playerFlagMarkup(player){
+  if(player==='PGB'||player==='STU'){
+    return `<svg class="flagSvg" viewBox="0 0 60 36" aria-label="England">
+      <rect width="60" height="36" fill="#fff"/>
+      <rect x="25" width="10" height="36" fill="#c8102e"/>
+      <rect y="13" width="60" height="10" fill="#c8102e"/>
+    </svg>`;
+  }
+
+  if(player==='DCM'){
+    return `<svg class="flagSvg" viewBox="0 0 60 36" aria-label="South Africa">
+      <rect width="60" height="18" fill="#de3831"/>
+      <rect y="18" width="60" height="18" fill="#002395"/>
+      <path d="M0 0 L28 18 L0 36Z" fill="#000"/>
+      <path d="M0 4 L22 18 L0 32" fill="none" stroke="#ffb612" stroke-width="7"/>
+      <path d="M0 7 L18 18 L0 29 M18 18 H60" fill="none" stroke="#fff" stroke-width="9"/>
+      <path d="M0 7 L18 18 L0 29 M18 18 H60" fill="none" stroke="#007a4d" stroke-width="5"/>
+    </svg>`;
+  }
+
+  if(player==='GEN'){
+    return `<svg class="flagSvg" viewBox="0 0 60 36" aria-label="Dominican Republic">
+      <rect width="60" height="36" fill="#fff"/>
+      <rect width="25" height="14" fill="#002d62"/>
+      <rect x="35" width="25" height="14" fill="#ce1126"/>
+      <rect y="22" width="25" height="14" fill="#ce1126"/>
+      <rect x="35" y="22" width="25" height="14" fill="#002d62"/>
+      <circle cx="30" cy="18" r="3" fill="#006847"/>
+    </svg>`;
+  }
+
+  return '';
+}
+
+let flipPlayer = '';
+let flipOldGross = '–';
 function render(){
   if(!holes.length || !players.length) return;
 
@@ -834,9 +1161,15 @@ function render(){
     const row=document.createElement('div');
     row.className='player';
     row.dataset.p=p.id;
-    row.innerHTML=`<div class="name">${p.id}</div>
+    const scoreClass =
+      flipPlayer===p.id
+        ? 'score flipAnimate'
+        : 'score';
+
+    row.innerHTML=`<div class="name"><div class="playerIdent">${playerFlagMarkup(p.id)}<span>${p.id}</span></div></div>
       <div class="controls"><button class="minus" onclick="bump('${p.id}',-1)">−</button>
-      <div class="score">${gross||'–'}</div><button class="plus" onclick="bump('${p.id}',1)">+</button></div>
+      <div class="${scoreClass}" data-old="${flipPlayer===p.id ? flipOldGross : (gross||'–')}"><span class="flipFace">${gross||'–'}</span></div>
+      <button class="plus" onclick="bump('${p.id}',1)">+</button></div>
       <div class="shots"><b>${sh}</b>${sh===1?'SHOT':'SHOTS'}</div>
       <div class="pts"><b>${pts===null?'–':pts}</b>PTS</div>
       <div class="total"><b>${totalFor(p.id)}</b>PTS</div>`;
@@ -851,6 +1184,7 @@ function bump(pid,d){
   if(document.body.classList.contains('score-loading')) return;
   scores[pid]??={};
   let n=scores[pid][hole]||0;
+  const oldGross=n||'–';
   n=Math.max(0,Math.min(15,n+d));
 
   if(n===0) delete scores[pid][hole];
@@ -859,8 +1193,15 @@ function bump(pid,d){
   const holeToSave=hole;
   const grossToSave=n;
 
+  flipPlayer=pid;
+  flipOldGross=oldGross;
+
   save();
   render();
+
+  window.setTimeout(()=>{
+    flipPlayer='';
+  },360);
 
   saveCentralScore(pid,holeToSave,grossToSave)
     .catch(()=>{});
