@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- SGT26_BUILD:OpenBoardScorecard1.0 -->
+<!-- SGT26_BUILD:OpenBoardScorecard1.2 -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -878,15 +878,211 @@ body.fourBallCompact .total b{font-size:23px}
   .name{font-size:22px}
   .flagSvg{width:27px;height:18px}
 }
+
+/* ============================================================
+   SGT26 Scorecard Open Board V1.2 — viewport fit
+   Banner is now correct; this pass fits the complete scoring UI
+   into the available dynamic mobile viewport without phone-specific
+   hard-coding.
+   ============================================================ */
+
+html,body{
+  min-height:100dvh;
+}
+body{
+  overflow:hidden;
+}
+.app{
+  height:100dvh;
+  min-height:100dvh;
+  max-height:100dvh;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+
+/* Banner keeps the proven Expenses treatment and simply takes its
+   natural aspect-ratio height. */
+.banner{
+  flex:0 0 auto;
+}
+
+/* Fixed family/header furniture. */
+.roundbar,
+.golfToggle,
+.pairingsBar,
+.stable,
+.head,
+.status,
+.nav{
+  flex:0 0 auto;
+}
+
+/* The hole block and players share the remaining height. */
+.hole{
+  flex:0 0 auto;
+}
+#players{
+  flex:1 1 auto;
+  min-height:0;
+  display:flex;
+  flex-direction:column;
+}
+
+/* In normal four-player mode divide remaining player area equally. */
+body.fourBallCompact #players .player{
+  flex:1 1 0;
+  min-height:0;
+}
+
+/* Keep pairings mode usable when only two players are shown. */
+body:not(.fourBallCompact) #players .player{
+  flex:0 0 auto;
+}
+
+/* Compact the hole board roughly 10% from V1.1. */
+body.fourBallCompact{
+  --hole-h:82px;
+  --player-h:58px;
+  --nav-h:58px;
+}
+body.fourBallCompact .holegrid{
+  min-height:82px;
+}
+body.fourBallCompact .big7{
+  font-size:clamp(34px,5.2dvh,46px)!important;
+  transform:translateY(4px)!important;
+}
+body.fourBallCompact .big7::before{
+  transform:translateY(-25px)!important;
+  font-size:10px!important;
+}
+body.fourBallCompact .metric b{
+  font-size:clamp(26px,4.3dvh,36px);
+  padding:4px 5px;
+}
+body.fourBallCompact .metric small{
+  font-size:9px;
+}
+
+/* Smaller player labels, but preserve comfortable +/- touch targets. */
+body.fourBallCompact .name{
+  font-size:clamp(18px,2.6dvh,22px);
+}
+body.fourBallCompact .flagSvg{
+  width:25px;
+  height:17px;
+}
+body.fourBallCompact .playerIdent{
+  gap:4px;
+}
+body.fourBallCompact .controls{
+  grid-template-columns:40px minmax(46px,1fr) 40px;
+  gap:4px;
+}
+body.fourBallCompact .minus,
+body.fourBallCompact .plus,
+body.fourBallCompact .score{
+  min-height:44px;
+  height:44px;
+}
+body.fourBallCompact .score{
+  font-size:27px;
+}
+body.fourBallCompact .shots b,
+body.fourBallCompact .pts b,
+body.fourBallCompact .total b{
+  font-size:22px;
+}
+body.fourBallCompact .pts b,
+body.fourBallCompact .total b{
+  min-height:34px;
+  margin-top:2px;
+  margin-bottom:2px;
+}
+
+/* Slim the fixed strips slightly to create a safe bottom margin. */
+body.fourBallCompact .roundbar{
+  min-height:52px;
+}
+body.fourBallCompact .roundbar>div{
+  padding-top:5px;
+  padding-bottom:4px;
+}
+body.fourBallCompact .golfToggle button,
+body.fourBallCompact .golfToggle a{
+  min-height:34px;
+  padding:4px 8px;
+}
+body.fourBallCompact .stable{
+  padding:2px 8px;
+  font-size:12px;
+}
+body.fourBallCompact .head{
+  min-height:22px;
+}
+body.fourBallCompact .status{
+  min-height:22px;
+  padding:2px 8px;
+}
+body.fourBallCompact .nav{
+  padding-top:3px;
+  padding-bottom:calc(3px + env(safe-area-inset-bottom));
+}
+body.fourBallCompact .nav button,
+body.fourBallCompact .navQuick .expensesLink{
+  min-height:58px;
+  height:58px;
+}
+
+/* Shorter browser viewports get one further gentle squeeze.
+   This is based on available viewport, not a particular device. */
+@media (max-height:820px){
+  body.fourBallCompact{
+    --hole-h:76px;
+    --nav-h:54px;
+  }
+  body.fourBallCompact .holegrid{min-height:76px}
+  body.fourBallCompact .big7{
+    font-size:clamp(31px,4.9dvh,42px)!important;
+  }
+  body.fourBallCompact .metric b{
+    font-size:clamp(24px,4dvh,33px);
+  }
+  body.fourBallCompact .name{
+    font-size:18px;
+  }
+  body.fourBallCompact .minus,
+  body.fourBallCompact .plus,
+  body.fourBallCompact .score{
+    min-height:42px;
+    height:42px;
+  }
+  body.fourBallCompact .nav button,
+  body.fourBallCompact .navQuick .expensesLink{
+    min-height:54px;
+    height:54px;
+  }
+}
+
+/* On taller devices don't let the scorecard become comically stretched. */
+@media (min-height:950px){
+  body.fourBallCompact #players .player{
+    max-height:72px;
+  }
+  #players{
+    justify-content:flex-start;
+  }
+}
 </style>
 <script>
-  const APP_VERSION = "OpenBoardScorecard1.1";
+  const APP_VERSION = "OpenBoardScorecard1.2";
   console.info("SGT26 Scorecard Open Board V1.1", APP_VERSION);
 </script>
 </head>
 <body>
 <div class="app">
-  <img class="banner" src="sgt26-banner.png?v=OpenBoardScorecard1.1" alt="Spanish Golf Tour 2026">
+  <img class="banner" src="sgt26-banner.png?v=OpenBoardScorecard1.2" alt="Spanish Golf Tour 2026">
   <div class="roundbar roundbarSimple">
     <div class="roundCourse">
       <span id="roundLabel">ROUND 1</span>
