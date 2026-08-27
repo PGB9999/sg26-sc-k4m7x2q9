@@ -1,0 +1,734 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0d1b36">
+  <title>Spanish Golf Tour 2026 — Evening Leaderboard</title>
+  <style>
+:root{
+  --navy:#071522;
+  --navy2:#0d1b36;
+  --ink:#10213b;
+  --cream:#f4eddf;
+  --gold:#e0aa24;
+  --gold2:#cf9012;
+  --slot1:#f6eac0;
+  --slot2:#d6bd78;
+  --teal:#1aa0a4;
+  --orange:#f36b18;
+}
+*{box-sizing:border-box}
+html,body{
+  margin:0;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  background:#050d17;
+  font-family:Arial,Helvetica,sans-serif;
+}
+body{
+  min-height:100dvh;
+  background:
+    radial-gradient(circle at 50% 0%,#17314e 0%,#071522 48%,#030810 100%);
+  color:var(--ink);
+}
+.app{
+  width:min(1500px,calc(100vw - 36px));
+  height:calc(100dvh - 28px);
+  margin:14px auto;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.15);
+  box-shadow:0 18px 60px rgba(0,0,0,.55);
+  background:var(--navy);
+}
+
+/* Tour identity strip */
+.brand{
+  position:relative;
+  height:clamp(120px,17dvh,175px);
+  flex:0 0 auto;
+  overflow:hidden;
+  border-bottom:4px solid var(--orange);
+  background:#0b1d32;
+}
+.brand img{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center 48%;
+  filter:saturate(.92) contrast(1.02) brightness(.8);
+}
+.brandShade{
+  position:absolute;
+  inset:0;
+  background:linear-gradient(90deg,rgba(3,11,22,.84) 0%,rgba(3,11,22,.24) 52%,rgba(3,11,22,.72) 100%);
+}
+.brandCopy{
+  position:absolute;
+  inset:0;
+  display:grid;
+  grid-template-columns:1fr auto;
+  align-items:end;
+  gap:24px;
+  padding:20px 30px 18px;
+  color:white;
+}
+.brandTitle small{
+  display:block;
+  font-size:13px;
+  font-weight:900;
+  letter-spacing:2.4px;
+  color:#f0c657;
+  margin-bottom:5px;
+}
+.brandTitle strong{
+  display:block;
+  font-size:clamp(28px,3.3vw,48px);
+  line-height:.95;
+  letter-spacing:.5px;
+  text-shadow:0 3px 12px rgba(0,0,0,.55);
+}
+.livePill{
+  align-self:center;
+  border:1px solid rgba(255,255,255,.35);
+  border-radius:999px;
+  padding:9px 14px;
+  background:rgba(3,11,22,.65);
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:1.3px;
+  white-space:nowrap;
+}
+.liveDot{
+  display:inline-block;
+  width:8px;height:8px;
+  border-radius:50%;
+  background:#ff5c49;
+  margin-right:7px;
+  box-shadow:0 0 12px rgba(255,92,73,.8);
+}
+
+/* Round strip */
+.hero{
+  flex:0 0 auto;
+  background:linear-gradient(180deg,#102944,#0d1b36);
+  color:white;
+  border-bottom:1px solid rgba(255,255,255,.14);
+}
+.titleRow{
+  display:grid;
+  grid-template-columns:1fr 180px 190px;
+}
+.titleBox,.timeBox,.refreshBox{
+  padding:12px 22px;
+  min-height:72px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+.timeBox,.refreshBox{border-left:1px solid rgba(255,255,255,.16)}
+.eyebrow{
+  display:block;
+  font-size:11px;
+  letter-spacing:1.2px;
+  font-weight:900;
+  color:#aebdcd;
+  margin-bottom:5px;
+}
+.roundSelectWrap{position:relative}
+.roundSelect{
+  width:100%;
+  appearance:none;
+  -webkit-appearance:none;
+  border:0;
+  background:transparent;
+  color:white;
+  font-size:clamp(22px,2.2vw,34px);
+  line-height:1;
+  font-weight:1000;
+  padding:0 32px 0 0;
+  outline:none;
+}
+.roundSelectWrap:after{
+  content:"⌄";
+  position:absolute;
+  right:2px;
+  top:0;
+  color:white;
+  font-size:25px;
+  pointer-events:none;
+}
+.timeBox strong{font-size:24px}
+.refreshBox button{
+  min-height:42px;
+  border:1px solid var(--teal);
+  border-radius:8px;
+  background:rgba(0,0,0,.16);
+  color:white;
+  font-weight:900;
+  letter-spacing:.3px;
+  cursor:pointer;
+}
+
+/* The board */
+.board{
+  position:relative;
+  flex:1 1 auto;
+  min-height:0;
+  display:flex;
+  flex-direction:column;
+  padding:18px 24px 20px;
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.08),transparent 9%),
+    linear-gradient(180deg,var(--gold),var(--gold2));
+  border-bottom:5px solid var(--ink);
+}
+.board:before{
+  content:"";
+  position:absolute;
+  inset:8px;
+  border:1px solid rgba(16,33,59,.18);
+  pointer-events:none;
+}
+.screw{
+  position:absolute;
+  width:13px;height:13px;
+  border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#d6b34e,#876415 68%,#5e440b 100%);
+  border:1px solid #59400a;
+  box-shadow:inset 1px 1px rgba(255,255,255,.4),0 1px 2px rgba(0,0,0,.35);
+  z-index:3;
+}
+.screw:after{
+  content:"";
+  position:absolute;
+  left:2px;right:2px;top:5px;height:1px;
+  background:#4a3509;
+  transform:rotate(-24deg);
+}
+.s1{top:12px;left:12px}.s2{top:12px;right:12px}.s3{bottom:12px;left:12px}.s4{bottom:12px;right:12px}
+
+.boardTitle{
+  flex:0 0 auto;
+  text-align:center;
+  color:var(--ink);
+  font-size:clamp(18px,1.65vw,25px);
+  font-weight:1000;
+  letter-spacing:2.6px;
+  text-transform:uppercase;
+  margin:0 0 13px;
+  text-shadow:0 1px rgba(255,255,255,.25);
+}
+.groupHeads{
+  flex:0 0 auto;
+  display:grid;
+  grid-template-columns:85px 100px minmax(240px,1fr) 180px 150px 145px 175px;
+  background:var(--ink);
+  color:#f9f0d8;
+  border:4px solid var(--ink);
+  border-bottom:0;
+  font-size:12px;
+  font-weight:1000;
+  letter-spacing:1.2px;
+  text-align:center;
+}
+.groupHeads .blank{grid-column:1/4}
+.groupHeads .roundGroup{grid-column:4/6}
+.groupHeads .tourGroup{grid-column:6/8}
+.groupHeads>div{
+  padding:8px 4px;
+  border-left:1px solid rgba(255,255,255,.23);
+}
+.boardFrame{
+  flex:1 1 auto;
+  min-height:0;
+  display:flex;
+  flex-direction:column;
+  border:4px solid var(--ink);
+  box-shadow:0 4px 0 rgba(0,0,0,.18);
+}
+.head,.row{
+  display:grid;
+  grid-template-columns:85px 100px minmax(240px,1fr) 180px 150px 145px 175px;
+  align-items:stretch;
+}
+.head{
+  flex:0 0 auto;
+  background:var(--ink);
+  color:#f9f0d8;
+  font-size:12px;
+  font-weight:1000;
+  letter-spacing:.9px;
+}
+.head>div{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:42px;
+  border-right:1px solid rgba(255,255,255,.22);
+}
+.head>div:nth-child(3){
+  justify-content:flex-start;
+  padding-left:18px;
+}
+#rows{
+  flex:1 1 auto;
+  min-height:0;
+  display:grid;
+  grid-template-rows:repeat(4,minmax(0,1fr));
+}
+.row{
+  min-height:0;
+  border-top:3px solid rgba(16,33,59,.52);
+  color:var(--ink);
+}
+.row>div{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-right:3px solid rgba(16,33,59,.36);
+}
+.row>div:last-child{border-right:0}
+.pos,.tourPos{
+  font-size:clamp(34px,4.2dvh,48px);
+  font-weight:1000;
+}
+.flagCell{padding:0 12px}
+.flagSvg{
+  width:64px;
+  height:39px;
+  display:block;
+  border:2px solid rgba(16,33,59,.45);
+  box-shadow:0 2px 2px rgba(0,0,0,.2);
+}
+.player{
+  justify-content:flex-start!important;
+  padding:0 20px!important;
+  white-space:nowrap;
+}
+.playerBlock{
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  min-width:0;
+}
+.playerName{
+  font-size:clamp(30px,4.5dvh,50px);
+  line-height:.92;
+  font-weight:1000;
+  letter-spacing:.4px;
+}
+.playerCode{
+  margin-top:5px;
+  font-size:12px;
+  line-height:1;
+  font-weight:900;
+  letter-spacing:2px;
+  opacity:.63;
+}
+.thru{
+  font-size:clamp(24px,3.4dvh,37px);
+  font-weight:1000;
+}
+.flip{
+  position:relative;
+  align-self:center;
+  width:calc(100% - 28px);
+  height:min(92px,calc(100% - 22px));
+  min-height:62px!important;
+  border:3px solid rgba(16,33,59,.48)!important;
+  border-radius:3px;
+  background:linear-gradient(
+    var(--slot1) 0%,
+    #ead69a 49%,
+    var(--slot2) 50%,
+    #efdc9e 100%
+  );
+  box-shadow:
+    inset 0 0 0 3px rgba(255,255,255,.25),
+    0 3px 2px rgba(0,0,0,.22);
+  font-family:"Arial Narrow",Arial,sans-serif;
+  font-size:clamp(42px,6.4dvh,72px);
+  font-weight:1000;
+  letter-spacing:-1px;
+}
+.flip:after{
+  content:"";
+  position:absolute;
+  left:0;right:0;top:50%;
+  height:2px;
+  background:rgba(16,33,59,.28);
+  box-shadow:0 1px rgba(255,255,255,.28);
+}
+.flip span{position:relative;z-index:2}
+.tourPts{font-size:clamp(38px,5.8dvh,66px)}
+.empty{
+  grid-row:1/-1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:24px;
+  font-weight:900;
+  color:var(--ink);
+}
+
+/* Bottom ticker */
+.status{
+  flex:0 0 auto;
+  min-height:42px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:18px;
+  padding:8px 22px;
+  background:#020405;
+  color:white;
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:.8px;
+}
+.status strong{color:#2bc3c8}
+.error{color:var(--orange)!important}
+.footer{
+  flex:0 0 auto;
+  min-height:44px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:16px;
+  padding:7px 18px;
+  background:var(--navy);
+}
+.footer a{
+  color:#d7e0e9;
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:.8px;
+  text-decoration:none;
+}
+.footer .sep{color:#556577}
+.footer button{display:none}
+
+/* Keep this page usable on smaller laptop windows too. */
+@media(max-width:1100px){
+  .app{width:calc(100vw - 16px);height:calc(100dvh - 12px);margin:6px auto}
+  .brand{height:105px}
+  .brandCopy{padding:13px 20px}
+  .titleRow{grid-template-columns:1fr 145px 150px}
+  .groupHeads,.head,.row{
+    grid-template-columns:65px 80px minmax(180px,1fr) 130px 110px 105px 125px;
+  }
+  .flagSvg{width:52px;height:32px}
+  .playerName{font-size:clamp(24px,4dvh,38px)}
+  .flip{font-size:clamp(34px,5.5dvh,56px)}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <section class="brand">
+    <img src="sgt26-banner.png" alt="Spanish Golf Tour 2026">
+    <div class="brandShade"></div>
+    <div class="brandCopy">
+      <div class="brandTitle">
+        <small>EVENING CLUBHOUSE BOARD</small>
+        <strong>SPANISH GOLF TOUR 2026</strong>
+      </div>
+      <div class="livePill"><span class="liveDot"></span>LIVE LEADERBOARD</div>
+    </div>
+  </section>
+
+  <header class="hero">
+    <div class="titleRow">
+      <div class="titleBox">
+        <span id="roundLabel" class="eyebrow">ROUND 1</span>
+        <div class="roundSelectWrap">
+          <select id="roundSelect" class="roundSelect" aria-label="Choose round">
+            <option value="1">LAS BRISAS · 59 TEE</option>
+            <option value="2">LOS ARQUEROS · YELLOW TEE</option>
+            <option value="3">ATALAYA GOLF - NEW COURSE · YELLOW TEE</option>
+            <option value="4">SANTA CLARA GOLF · YELLOW TEE</option>
+            <option value="5">MARBELLA GOLF RESORT · EQUIVALENT TEE</option>
+            <option value="6">SANTANA · YELLOW TEE</option>
+          </select>
+        </div>
+      </div>
+      <div class="timeBox">
+        <span class="eyebrow">TEE TIME</span>
+        <strong id="teeTime">—</strong>
+      </div>
+      <div class="refreshBox">
+        <span class="eyebrow">DATA</span>
+        <button id="refreshBtn" type="button">↻ REFRESH BOARD</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="board">
+    <i class="screw s1"></i><i class="screw s2"></i><i class="screw s3"></i><i class="screw s4"></i>
+    <div class="boardTitle">Official Tour Leaderboard</div>
+    <div class="groupHeads">
+      <div class="blank"></div>
+      <div class="roundGroup">THIS ROUND</div>
+      <div class="tourGroup">TOUR</div>
+    </div>
+    <div class="boardFrame">
+      <div class="head">
+        <div>POS</div><div>FLAG</div><div>PLAYER</div>
+        <div>POINTS</div><div>AFTER</div><div>POS</div><div>POINTS</div>
+      </div>
+      <div id="rows"><div class="empty">Loading leaderboard…</div></div>
+    </div>
+  </main>
+
+  <div class="status">
+    <strong id="updated">LOADING…</strong>
+    <span id="freshness">NO CACHED DATA</span>
+  </div>
+  <footer class="footer">
+    <a id="scorecardLink" href="scorecard.html">SCORECARD</a>
+    <span class="sep">•</span>
+    <a href="index.html">TOUR MENU</a>
+  </footer>
+</div>
+
+<script>
+const API_URL="https://script.google.com/macros/s/AKfycbz06cod2GzirOUT7HCyMLgzF9RLJE8psZQqEQFSzrKut3fYMGVsRicuEutsFabVNelm/exec";
+let currentRound=1;
+function queryRound(){
+  const q=new URLSearchParams(location.search);
+  const n=Number(q.get('round')||1);
+  return Number.isInteger(n)&&n>=1&&n<=6?n:1;
+}
+
+
+function cacheKey(roundNumber){
+  return `sgt26_leaderboard_round_${roundNumber}`;
+}
+
+function loadCachedLeaderboard(roundNumber){
+  try{
+    const raw=localStorage.getItem(cacheKey(roundNumber));
+    if(!raw) return null;
+    const parsed=JSON.parse(raw);
+    if(!parsed || !Array.isArray(parsed.data)) return null;
+    return parsed;
+  }catch(error){
+    console.warn('Leaderboard cache read failed:',error);
+    return null;
+  }
+}
+
+function saveCachedLeaderboard(roundNumber,data){
+  try{
+    localStorage.setItem(
+      cacheKey(roundNumber),
+      JSON.stringify({
+        savedAt:new Date().toISOString(),
+        data:data
+      })
+    );
+  }catch(error){
+    console.warn('Leaderboard cache write failed:',error);
+  }
+}
+
+function formatFreshness(iso){
+  if(!iso) return 'NO CACHED DATA';
+  const d=new Date(iso);
+  if(Number.isNaN(d.getTime())) return 'LAST KNOWN DATA';
+  const now=Date.now();
+  const secs=Math.max(0,Math.floor((now-d.getTime())/1000));
+  if(secs<5) return 'UPDATED JUST NOW';
+  if(secs<60) return `UPDATED ${secs}s AGO`;
+  const mins=Math.floor(secs/60);
+  return `UPDATED ${mins}m AGO`;
+}
+
+function showCachedLeaderboard(){
+  const cached=loadCachedLeaderboard(currentRound);
+  if(!cached) return false;
+
+  currentTourStandings={};
+  renderRows(cached.data);
+  document.getElementById('updated').textContent='LAST KNOWN';
+  document.getElementById('updated').classList.remove('error');
+  document.getElementById('freshness').textContent=formatFreshness(cached.savedAt);
+  return true;
+}
+
+function apiJsonp(params){
+  return new Promise((resolve,reject)=>{
+    const callbackName=`sgt26Lb_${Date.now()}_${Math.floor(Math.random()*100000)}`;
+    const script=document.createElement('script');
+    const cleanup=()=>{try{delete window[callbackName]}catch(_){} script.remove()};
+    const timeout=setTimeout(()=>{cleanup();reject(new Error('Leaderboard request timed out.'))},15000);
+
+    window[callbackName]=payload=>{
+      clearTimeout(timeout);cleanup();
+      if(!payload||payload.ok===false){
+        reject(new Error(payload?.error||'Leaderboard request failed.'));
+        return;
+      }
+      resolve(payload.data);
+    };
+
+    script.onerror=()=>{
+      clearTimeout(timeout);cleanup();reject(new Error('Unable to contact leaderboard backend.'));
+    };
+
+    const query=new URLSearchParams({...params,callback:callbackName,v:'RyderCup2022.1'});
+    script.src=`${API_URL}?${query.toString()}`;
+    document.head.appendChild(script);
+  });
+}
+
+function flagMarkup(player){
+  if(player==='PGB'||player==='STU'){
+    return `<svg class="flagSvg" viewBox="0 0 60 36" aria-label="England">
+      <rect width="60" height="36" fill="#fff"/><rect x="25" width="10" height="36" fill="#c8102e"/><rect y="13" width="60" height="10" fill="#c8102e"/>
+    </svg>`;
+  }
+  if(player==='DCM'){
+    return `<svg class="flagSvg" viewBox="0 0 60 36" aria-label="South Africa">
+      <rect width="60" height="18" fill="#de3831"/><rect y="18" width="60" height="18" fill="#002395"/>
+      <path d="M0 0 L28 18 L0 36Z" fill="#000"/><path d="M0 4 L22 18 L0 32" fill="none" stroke="#ffb612" stroke-width="7"/>
+      <path d="M0 7 L18 18 L0 29 M18 18 H60" fill="none" stroke="#fff" stroke-width="9"/>
+      <path d="M0 7 L18 18 L0 29 M18 18 H60" fill="none" stroke="#007a4d" stroke-width="5"/>
+    </svg>`;
+  }
+  if(player==='GEN'){
+    return `<svg class="flagSvg" viewBox="0 0 60 36" aria-label="Dominican Republic">
+      <rect width="60" height="36" fill="#fff"/><rect width="25" height="14" fill="#002d62"/><rect x="35" width="25" height="14" fill="#ce1126"/>
+      <rect y="22" width="25" height="14" fill="#ce1126"/><rect x="35" y="22" width="25" height="14" fill="#002d62"/>
+      <circle cx="30" cy="18" r="3" fill="#006847"/>
+    </svg>`;
+  }
+  return '';
+}
+
+function tourStandingsFrom(roundBoards){
+  const totals={PGB:0,DCM:0,STU:0,GEN:0};
+  roundBoards.forEach(board=>{
+    (Array.isArray(board)?board:[]).forEach(item=>{
+      if(Object.prototype.hasOwnProperty.call(totals,item.player)){
+        totals[item.player]+=Number(item.totalPoints)||0;
+      }
+    });
+  });
+  const ordered=Object.entries(totals).sort((a,b)=>b[1]-a[1] || a[0].localeCompare(b[0]));
+  let previous=null,position=0;
+  const result={};
+  ordered.forEach(([player,points],index)=>{
+    if(previous===null || points!==previous) position=index+1;
+    result[player]={position,points};
+    previous=points;
+  });
+  return result;
+}
+
+let currentTourStandings={};
+function renderRows(items){
+  const host=document.getElementById('rows');
+  if(!Array.isArray(items)||!items.length){
+    host.innerHTML='<div class="empty">No leaderboard data yet.</div>';
+    return;
+  }
+  const playerNames={
+    PGB:'PAUL',
+    DCM:'DAVID',
+    STU:'STU',
+    GEN:'JEANERIC'
+  };
+  host.innerHTML=items.map(item=>{
+    const tour=currentTourStandings[item.player]||{position:'—',points:0};
+    const displayName=playerNames[item.player]||item.player;
+    return `
+    <div class="row" data-player="${item.player}">
+      <div class="pos">${item.position}</div>
+      <div class="flagCell">${flagMarkup(item.player)}</div>
+      <div class="player"><div class="playerBlock"><span class="playerName">${displayName}</span><span class="playerCode">${item.player}</span></div></div>
+      <div class="flip pts"><span>${item.totalPoints}</span></div>
+      <div class="thru">${item.thru||'—'}</div>
+      <div class="tourPos">${tour.position}</div>
+      <div class="flip tourPts"><span>${tour.points}</span></div>
+    </div>`;
+  }).join('');
+}
+
+function updateLinks(){
+  document.getElementById('scorecardLink').href=`scorecard.html?round=${currentRound}`;
+}
+
+function updateMeta(roundData){
+  if(!roundData||!roundData.round)return;
+  document.getElementById('roundLabel').textContent=`ROUND ${roundData.round}`;
+  document.getElementById('teeTime').textContent=String(roundData.teeTime||'TBD').toUpperCase();
+}
+
+async function loadLeaderboard(){
+  const host=document.getElementById('rows');
+  const hadCache=showCachedLeaderboard();
+
+  if(!hadCache){
+    host.innerHTML='<div class="empty">Loading leaderboard…</div>';
+  }
+
+  document.getElementById('updated').textContent='UPDATING…';
+  document.getElementById('updated').classList.remove('error');
+
+  try{
+    const tourRequests=[];
+    for(let r=1;r<=currentRound;r++){
+      tourRequests.push(apiJsonp({service:'scorecards',action:'leaderboard',round:r}));
+    }
+
+    const [leaderboard,roundPayload,tourBoards]=await Promise.all([
+      apiJsonp({service:'scorecards',action:'leaderboard',round:currentRound}),
+      apiJsonp({service:'scorecards',action:'round',round:currentRound}),
+      Promise.all(tourRequests)
+    ]);
+
+    currentTourStandings=tourStandingsFrom(tourBoards);
+    renderRows(leaderboard);
+    updateMeta(roundPayload.round);
+    saveCachedLeaderboard(currentRound,leaderboard);
+
+    document.getElementById('updated').textContent='✓ UPDATED';
+    document.getElementById('freshness').textContent='JUST NOW';
+  }catch(error){
+    console.error(error);
+
+    if(hadCache){
+      document.getElementById('updated').textContent='⚠ LAST KNOWN';
+      document.getElementById('freshness').textContent='NETWORK UNAVAILABLE';
+    }else{
+      document.getElementById('updated').textContent='⚠ DATA ERROR';
+      document.getElementById('updated').classList.add('error');
+      document.getElementById('freshness').textContent='NO CACHED DATA';
+    }
+  }
+}
+
+document.getElementById('roundSelect').addEventListener('change',e=>{
+  currentRound=Number(e.target.value)||1;
+  history.replaceState(null,'',`leaderboard.html?round=${currentRound}`);
+  updateLinks();
+  loadLeaderboard();
+});
+
+document.getElementById('refreshBtn').addEventListener('click',loadLeaderboard);
+
+currentRound=queryRound();
+document.getElementById('roundSelect').value=String(currentRound);
+updateLinks();
+loadLeaderboard();
+</script>
+<!-- SGT26 Evening Leaderboard V1: laptop / clubhouse Open-board display -->
+</body>
+</html>
