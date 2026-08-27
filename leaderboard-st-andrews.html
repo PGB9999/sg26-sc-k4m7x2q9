@@ -37,10 +37,10 @@ html,body{
 }
 .board{
   position:absolute;
-  left:3.6%;
-  top:39.5%;
-  width:62%;
-  height:52.5%;
+  left:4.1%;
+  top:42.2%;
+  width:58.5%;
+  height:49.5%;
   display:flex;
   flex-direction:column;
   background:linear-gradient(#f2bb1d,#dca10d);
@@ -51,17 +51,17 @@ html,body{
   z-index:2;
 }
 .boardTop{
-  flex:0 0 16%;
+  flex:0 0 20%;
   background:linear-gradient(#0c1a2d,#06111f);
   color:#fff;
   display:grid;
   grid-template-columns:1fr auto;
   align-items:center;
-  padding:1.4% 2.2%;
+  padding:1.2% 2.1%;
   border-bottom:4px solid #b7890a;
 }
 .tourTitle{
-  font-size:clamp(25px,2.7vw,52px);
+  font-size:clamp(28px,2.95vw,56px);
   font-weight:1000;
   letter-spacing:1.2px;
   line-height:.95;
@@ -70,14 +70,14 @@ html,body{
 .tourSub{
   display:block;
   margin-top:7px;
-  font-size:clamp(10px,.85vw,16px);
+  font-size:clamp(10px,.8vw,15px);
   letter-spacing:3px;
   font-weight:900;
   color:#e7c963;
 }
 .roundMeta{
   text-align:right;
-  min-width:250px;
+  min-width:230px;
   font-weight:1000;
   line-height:1.05;
 }
@@ -89,7 +89,7 @@ html,body{
 }
 .roundMeta strong{
   display:block;
-  font-size:clamp(16px,1.45vw,28px);
+  font-size:clamp(16px,1.35vw,26px);
   margin-top:4px;
 }
 .roundSelect{
@@ -112,7 +112,7 @@ html,body{
   min-height:0;
   display:flex;
   flex-direction:column;
-  padding:1.3%;
+  padding:1.05%;
 }
 .boardLabel{
   flex:0 0 auto;
@@ -120,7 +120,7 @@ html,body{
   color:var(--ink);
   font-weight:1000;
   letter-spacing:3px;
-  font-size:clamp(14px,1.2vw,22px);
+  font-size:clamp(13px,1.05vw,20px);
   margin-bottom:.9%;
 }
 .frame{
@@ -186,13 +186,13 @@ html,body{
 }
 .row>div:last-child{border-right:0}
 .pos,.tourPos{
-  font-size:clamp(25px,3.7vh,48px);
+  font-size:clamp(24px,3.6vh,46px);
   font-weight:1000;
 }
 .flagCell{padding:0 8px}
 .flagSvg{
   width:80%;
-  max-width:70px;
+  max-width:74px;
   aspect-ratio:5/3;
   border:2px solid rgba(16,33,59,.45);
   box-shadow:0 2px 2px rgba(0,0,0,.2);
@@ -203,7 +203,7 @@ html,body{
 }
 .playerBlock{display:flex;flex-direction:column;justify-content:center}
 .playerName{
-  font-size:clamp(27px,4.2vh,56px);
+  font-size:clamp(28px,4.45vh,60px);
   line-height:.88;
   font-weight:1000;
 }
@@ -216,7 +216,7 @@ html,body{
   opacity:.7;
 }
 .thru{
-  font-size:clamp(25px,3.8vh,48px);
+  font-size:clamp(24px,3.6vh,46px);
   font-weight:1000;
 }
 .flip{
@@ -232,7 +232,7 @@ html,body{
     0 3px 2px rgba(0,0,0,.25);
   color:#d6402f;
   font-family:"Arial Narrow",Arial,sans-serif;
-  font-size:clamp(32px,5.1vh,64px);
+  font-size:clamp(31px,4.95vh,62px);
   font-weight:1000;
   letter-spacing:-2px;
 }
@@ -245,7 +245,7 @@ html,body{
   box-shadow:0 1px rgba(255,255,255,.08);
 }
 .flip span{position:relative;z-index:2}
-.tourPts{font-size:clamp(30px,4.8vh,60px)}
+.tourPts{font-size:clamp(30px,4.7vh,58px)}
 .empty{
   grid-row:1/-1;
   display:flex;
@@ -267,8 +267,8 @@ html,body{
 
 .status{
   position:absolute;
-  left:4.2%;
-  bottom:5.6%;
+  left:4.6%;
+  bottom:4.3%;
   right:auto;
   z-index:4;
   display:flex;
@@ -283,6 +283,81 @@ html,body{
 }
 .status strong{color:#2bc3c8}
 .footer{display:none}
+
+/* V2.2 flower arranging — closer to the approved St Andrews mock-up */
+.boardTop{
+  grid-template-columns:minmax(0,1.35fr) minmax(230px,.65fr);
+}
+.tourTitle{
+  max-width:590px;
+}
+.tourSub{
+  color:#f0bf2d;
+  letter-spacing:2.2px;
+}
+.roundMeta{
+  padding-right:2px;
+}
+.boardBody{
+  padding-top:.8%;
+}
+.boardLabel{
+  margin-bottom:.55%;
+  letter-spacing:2.4px;
+}
+.groupHeads,
+.head,
+.row{
+  grid-template-columns:7.5% 8.5% 37% 12% 10.5% 10% 14.5%;
+}
+.groupHeads{
+  font-size:clamp(10px,.82vw,14px);
+}
+.head{
+  font-size:clamp(10px,.78vw,13px);
+}
+.head>div{
+  padding-top:5px;
+  padding-bottom:5px;
+}
+.player{
+  padding-left:3.2%!important;
+}
+.playerName{
+  letter-spacing:-.4px;
+}
+.playerCode{
+  margin-top:2px;
+  font-size:clamp(9px,.82vw,13px);
+  letter-spacing:1.8px;
+  opacity:.72;
+}
+.flagSvg{
+  width:78%;
+}
+.flip{
+  width:78%;
+  height:72%;
+  min-height:58px;
+  border-width:4px!important;
+}
+.boardFrame,
+.frame{
+  box-shadow:none;
+}
+.status{
+  font-size:10px;
+  padding:5px 8px;
+}
+@media(max-width:1250px){
+  .board{
+    left:3.3%;
+    width:61%;
+  }
+  .tourTitle{
+    font-size:clamp(26px,3vw,46px);
+  }
+}
 </style>
 </head>
 <body>
@@ -563,6 +638,6 @@ document.getElementById('roundSelect').value=String(currentRound);
 updateLinks();
 loadLeaderboard();
 </script>
-<!-- SGT26 St Andrews Leaderboard V2.1: lower-left scene board + data fix -->
+<!-- SGT26 St Andrews Leaderboard V2.2: mockup-matched lower-left board -->
 </body>
 </html>
