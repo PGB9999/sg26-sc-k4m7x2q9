@@ -80,6 +80,8 @@ button{font:inherit}
 .gallery{
   display:grid;grid-template-columns:repeat(3,1fr);gap:5px;padding:5px;background:#e9e2d7
 }
+.galleryEmpty{padding:34px 18px;text-align:center;color:var(--muted);font-size:13px;font-weight:900;background:#fffaf1;border-bottom:1px solid var(--line)}
+.galleryEmpty[hidden]{display:none}
 .tile{
   position:relative;aspect-ratio:1/1;border:0;padding:0;overflow:hidden;background:#d2d8dc;cursor:pointer
 }
@@ -197,32 +199,14 @@ button{font:inherit}
 
   <nav class="filters" aria-label="Photo filters">
     <button class="chip active" data-filter="all" type="button">ALL</button>
-    <button class="chip" data-filter="round1" type="button">ROUND 1</button>
-    <button class="chip" data-filter="round2" type="button">ROUND 2</button>
-    <button class="chip" data-filter="offcourse" type="button">OFF COURSE</button>
-    <button class="chip" data-filter="travel" type="button">TRAVEL</button>
+    <button class="chip" data-filter="PGB" type="button">PGB</button>
+    <button class="chip" data-filter="DCM" type="button">DCM</button>
+    <button class="chip" data-filter="STU" type="button">STU</button>
+    <button class="chip" data-filter="GEN" type="button">GEN</button>
   </nav>
 
-  <main id="gallery" class="gallery" aria-live="polite">
-    <button class="tile placeholder" data-category="round1" type="button">
-      <span class="placeholderIcon">⛳</span><span class="meta">Round 1 · Las Brisas</span>
-    </button>
-    <button class="tile placeholder" data-category="offcourse" type="button">
-      <span class="placeholderIcon">🍻</span><span class="meta">Off Course · Marbella</span>
-    </button>
-    <button class="tile placeholder" data-category="round2" type="button">
-      <span class="placeholderIcon">🏌️</span><span class="meta">Round 2 · Golf</span>
-    </button>
-    <button class="tile placeholder" data-category="travel" type="button">
-      <span class="placeholderIcon">✈️</span><span class="meta">Travel · Arrival</span>
-    </button>
-    <button class="tile placeholder" data-category="round1" type="button">
-      <span class="placeholderIcon">🏆</span><span class="meta">Round 1 · Leaderboard moment</span>
-    </button>
-    <button class="tile placeholder" data-category="offcourse" type="button">
-      <span class="placeholderIcon">🍽️</span><span class="meta">Off Course · Dinner</span>
-    </button>
-  </main>
+  <main id="gallery" class="gallery" aria-live="polite"></main>
+  <div id="galleryEmpty" class="galleryEmpty">Loading tour photos…</div>
 
   <div class="noteBox">
     Camera workflow test: after Samsung OK you now get Retake / Another / OK before the photo is finally stored in Drive.
@@ -287,6 +271,7 @@ const API_URL =
 const PLAYER_KEY = 'sgt26Photographer';
 
 const gallery = document.getElementById('gallery');
+const galleryEmpty = document.getElementById('galleryEmpty');
 const cameraInput = document.getElementById('cameraInput');
 const galleryInput = document.getElementById('galleryInput');
 const takePhotoBtn = document.getElementById('takePhotoBtn');
@@ -429,7 +414,7 @@ function addLocalPreview(file,label){
 
   tile.type = 'button';
   tile.className = 'tile';
-  tile.dataset.category = 'round1';
+  tile.dataset.photographer = photographer || 'UNK';
   tile.dataset.url = url;
   tile.dataset.caption = label;
 
@@ -543,6 +528,7 @@ function queueBackgroundUpload(file){
       if(!statusEl.classList.contains('error')){
         setStatus('✓ All photos saved to Tour Drive.','ok');
       }
+      loadDriveGallery();
       maybeCompletePendingExit();
     }else{
       updateQueueStatus();
@@ -639,21 +625,126 @@ galleryInput.addEventListener('change',async()=>{
   }
 });
 
+let activePhotoFilter = 'all';
+
+function applyPhotoFilter(){
+  const tiles=[...gallery.querySelectorAll('.tile')];
+  let visible=0;
+
+  tiles.forEach(tile=>{
+    const show=activePhotoFilter==='all' || tile.dataset.photographer===activePhotoFilter;
+    tile.style.display=show ? 'block' : 'none';
+    if(show) visible++;
+  });
+
+  if(!tiles.length){
+    galleryEmpty.hidden=false;
+    galleryEmpty.textContent='No tour photos yet.';
+  }else if(!visible){
+    galleryEmpty.hidden=false;
+    galleryEmpty.textContent=`No photos from ${activePhotoFilter} yet.`;
+  }else{
+    galleryEmpty.hidden=true;
+  }
+}
+
 document.querySelectorAll('.chip').forEach(btn=>{
   btn.addEventListener('click',()=>{
     document.querySelectorAll('.chip').forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');
-
-    const filter = btn.dataset.filter;
-
-    [...gallery.children].forEach(tile=>{
-      tile.style.display =
-        (filter === 'all' || tile.dataset.category === filter)
-          ? 'block'
-          : 'none';
-    });
+    activePhotoFilter=btn.dataset.filter;
+    applyPhotoFilter();
   });
 });
+
+function apiJsonpPhotos(params){
+  return new Promise((resolve,reject)=>{
+    const callbackName=`sgt26Photos_${Date.now()}_${Math.floor(Math.random()*100000)}`;
+    const script=document.createElement('script');
+
+    const cleanup=()=>{
+      try{delete window[callbackName];}catch(_){}
+      script.remove();
+    };
+
+    const timer=setTimeout(()=>{
+      cleanup();
+      reject(new Error('Photo gallery request timed out.'));
+    },15000);
+
+    window[callbackName]=payload=>{
+      clearTimeout(timer);
+      cleanup();
+      if(!payload || payload.ok===false){
+        reject(new Error(payload?.error || 'Photo gallery request failed.'));
+        return;
+      }
+      resolve(payload.data);
+    };
+
+    script.onerror=()=>{
+      clearTimeout(timer);
+      cleanup();
+      reject(new Error('Unable to contact photo gallery backend.'));
+    };
+
+    const query=new URLSearchParams({...params,callback:callbackName,v:Date.now()});
+    script.src=`${API_URL}?${query.toString()}`;
+    document.head.appendChild(script);
+  });
+}
+
+function formatPhotoCaption(photo){
+  return photo.displayDate
+    ? `${photo.photographer || 'UNK'} · ${photo.displayDate}`
+    : (photo.photographer || 'UNK');
+}
+
+function renderDriveGallery(photos){
+  gallery.innerHTML='';
+
+  if(!Array.isArray(photos) || !photos.length){
+    galleryEmpty.hidden=false;
+    galleryEmpty.textContent='No tour photos yet.';
+    return;
+  }
+
+  photos.forEach(photo=>{
+    const tile=document.createElement('button');
+    tile.type='button';
+    tile.className='tile';
+    tile.dataset.photographer=photo.photographer || 'UNK';
+    tile.dataset.url=photo.fullUrl;
+    tile.dataset.caption=formatPhotoCaption(photo);
+
+    const img=document.createElement('img');
+    img.src=photo.thumbnailUrl;
+    img.alt=photo.name || 'Tour photo';
+    img.loading='lazy';
+
+    const meta=document.createElement('span');
+    meta.className='meta';
+    meta.textContent=formatPhotoCaption(photo);
+
+    tile.append(img,meta);
+    gallery.appendChild(tile);
+  });
+
+  applyPhotoFilter();
+}
+
+function loadDriveGallery(){
+  galleryEmpty.hidden=false;
+  galleryEmpty.textContent='Loading tour photos…';
+
+  apiJsonpPhotos({service:'photos',action:'list'})
+    .then(renderDriveGallery)
+    .catch(error=>{
+      console.error('Photo gallery load failed:',error);
+      galleryEmpty.hidden=false;
+      galleryEmpty.textContent='Unable to load tour photos.';
+    });
+}
 
 gallery.addEventListener('click',event=>{
   const tile = event.target.closest('.tile');
@@ -704,6 +795,8 @@ window.addEventListener('beforeunload',event=>{
     event.returnValue = '';
   }
 });
+
+loadDriveGallery();
 
 document.getElementById('lightboxClose').addEventListener('click',closeLightbox);
 
