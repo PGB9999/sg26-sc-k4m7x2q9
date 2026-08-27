@@ -6,17 +6,32 @@
   <meta name="theme-color" content="#0d1b36">
   <title>Spanish Golf Tour 2026 — Leaderboard</title>
   <style>
-:root{--navy:#0d1b36;--navy2:#071522;--cream:#f4eddf;--teal:#1aa0a4;--orange:#f36b18;--yellow:#e1aa25;--yellow2:#d79a17;--ink:#10213b}
+:root{--navy:#0d1b36;--navy2:#071522;--cream:#f4eddf;--teal:#1aa0a4;--orange:#f36b18;--yellow:#e2ad28;--yellow2:#d89b18;--ink:#10213b;--slot:#ead59b;--muted:#6d7480}
 *{box-sizing:border-box}html,body{margin:0;background:var(--navy2);font-family:Arial,Helvetica,sans-serif;color:var(--navy)}body{min-height:100vh}.app{max-width:860px;margin:auto;background:var(--cream);min-height:100vh}
-.hero{background:linear-gradient(180deg,#112844,#0d1b36);color:#fff;border-bottom:3px solid var(--orange)}.titleRow{display:grid;grid-template-columns:minmax(0,2.15fr) minmax(108px,.85fr)}.titleBox,.timeBox{padding:14px 18px}.timeBox{border-left:1px solid #ffffff2e}.eyebrow{display:block;font-size:13px;letter-spacing:.8px;font-weight:900;color:#b9c6d4;margin-bottom:6px}.roundSelectWrap{position:relative}.roundSelect{width:100%;appearance:none;border:0;background:transparent;color:#fff;font-size:clamp(20px,5vw,31px);font-weight:900;padding:0 28px 0 0;outline:0}.roundSelectWrap:after{content:"⌄";position:absolute;right:0;top:3px;color:#fff;font-weight:900}.timeBox strong{font-size:21px}
+.hero{background:linear-gradient(180deg,#112844,#0d1b36);color:#fff;border-bottom:3px solid var(--orange)}.titleRow{display:grid;grid-template-columns:minmax(0,2.15fr) minmax(108px,.85fr)}.titleBox,.timeBox{padding:14px 18px}.timeBox{border-left:1px solid #ffffff2e}.eyebrow{display:block;font-size:13px;letter-spacing:.8px;font-weight:900;color:#b9c6d4;margin-bottom:6px}.roundSelectWrap{position:relative}.roundSelect{width:100%;appearance:none;-webkit-appearance:none;border:0;background:transparent;color:#fff;font-size:clamp(20px,5vw,31px);line-height:1.06;font-weight:900;padding:0 28px 0 0;outline:0}.roundSelectWrap:after{content:"⌄";position:absolute;right:0;top:3px;color:#fff;font-weight:900;pointer-events:none}.timeBox strong{font-size:21px}
 .golfToggle{display:grid;grid-template-columns:1fr 1fr;background:var(--navy2);border-bottom:3px solid var(--orange)}.golfToggle a,.golfToggle span{min-height:44px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;text-decoration:none}.golfToggle a{color:var(--cream)}.golfToggle span{color:var(--navy);background:var(--cream)}
-.board{background:linear-gradient(var(--yellow),var(--yellow2));padding:12px 7px 16px;border-bottom:5px solid var(--ink)}.boardTitle{text-align:center;color:var(--ink);font-weight:1000;letter-spacing:1px;font-size:14px;margin:0 0 9px;text-transform:uppercase}.boardFrame{border:3px solid var(--ink);box-shadow:0 3px 0 #0002}
-.head,.row{display:grid;grid-template-columns:42px minmax(135px,1fr) 55px 62px 62px;align-items:stretch}.head{background:var(--ink);color:#f8f1df;font-size:11px;font-weight:1000;letter-spacing:.5px}.head>div{padding:9px 3px;border-right:1px solid #ffffff38;display:flex;align-items:center;justify-content:center}.head>div:nth-child(2){justify-content:flex-start;padding-left:8px}.head>div:last-child{border:0}
-.row{min-height:88px;border-top:2px solid #10213b73;color:var(--ink)}.row>div{border-right:2px solid #10213b59;display:flex;align-items:center;justify-content:center}.row>div:last-child{border-right:0}.pos{font-size:25px;font-weight:1000}.player{font-size:22px;font-weight:1000;justify-content:flex-start!important;padding:0 6px;gap:6px;white-space:nowrap}.flag{font-size:22px;line-height:1}.thru{font-size:17px;font-weight:1000}
-.flip{margin:8px 4px;min-height:55px!important;border:2px solid #10213b73!important;border-radius:2px;background:linear-gradient(#f5e9bd 0%,#e8d69d 49%,#d7be7d 50%,#ebd9a2 100%);box-shadow:inset 0 0 0 2px #ffffff3d,0 2px 1px #0003;font-family:"Arial Narrow",Arial,sans-serif;font-size:31px;font-weight:1000;position:relative}.flip:after{content:"";position:absolute;left:0;right:0;top:50%;height:1px;background:#10213b47}.flip span{z-index:1}.last.flip{font-size:27px}
-.empty{padding:38px 20px;text-align:center;color:var(--ink);font-weight:900}.status{background:#000;color:#fff;display:flex;justify-content:space-between;padding:10px 14px;font-size:12px;font-weight:900}.status strong{color:#2bc3c8}.error{color:var(--orange)!important}
+
+.board{background:linear-gradient(var(--yellow),var(--yellow2));padding:14px 8px 18px;border-bottom:5px solid var(--ink);position:relative}
+.screw{position:absolute;width:9px;height:9px;border-radius:50%;background:#8a6a1b;border:1px solid #5f4810;box-shadow:inset 1px 1px #d4b456}.screw:after{content:"";position:absolute;left:1px;right:1px;top:3px;height:1px;background:#4d3b0e;transform:rotate(-25deg)}.s1{top:7px;left:7px}.s2{top:7px;right:7px}.s3{bottom:7px;left:7px}.s4{bottom:7px;right:7px}
+.boardTitle{text-align:center;color:var(--ink);font-weight:1000;letter-spacing:1.2px;font-size:15px;margin:0 0 11px;text-transform:uppercase}
+.groupHeads{display:grid;grid-template-columns:42px 50px minmax(118px,1fr) 112px 108px;background:var(--ink);color:#f8f1df;border:3px solid var(--ink);border-bottom:0;font-size:10px;font-weight:1000;letter-spacing:.7px;text-align:center}
+.groupHeads .blank{grid-column:1/4}.groupHeads .roundGroup{grid-column:4}.groupHeads .tourGroup{grid-column:5}.groupHeads>div{padding:7px 3px;border-left:1px solid #ffffff35}
+.boardFrame{border:3px solid var(--ink);box-shadow:0 3px 0 #0002}
+.head,.row{display:grid;grid-template-columns:42px 50px minmax(118px,1fr) 62px 50px 54px 54px;align-items:stretch}
+.head{background:var(--ink);color:#f8f1df;font-size:10px;font-weight:1000;letter-spacing:.45px}
+.head>div{padding:8px 2px;border-right:1px solid #ffffff38;display:flex;align-items:center;justify-content:center}.head>div:nth-child(3){justify-content:flex-start;padding-left:7px}.head>div:last-child{border:0}
+.row{min-height:92px;border-top:2px solid #10213b73;color:var(--ink)}.row>div{border-right:2px solid #10213b59;display:flex;align-items:center;justify-content:center}.row>div:last-child{border-right:0}
+.pos,.tourPos{font-size:25px;font-weight:1000}.flagCell{padding:0 5px}.flagSvg{width:36px;height:24px;display:block;border:1px solid #10213b80;box-shadow:0 1px 1px #0002}
+.player{font-size:24px;font-weight:1000;justify-content:flex-start!important;padding:0 7px;white-space:nowrap}.thru{font-size:18px;font-weight:1000}
+.flip{margin:9px 4px;min-height:57px!important;border:2px solid #10213b73!important;border-radius:2px;background:linear-gradient(#f5e9bd 0%,#e8d69d 49%,#d7be7d 50%,#ebd9a2 100%);box-shadow:inset 0 0 0 2px #ffffff3d,0 2px 1px #0003;font-family:"Arial Narrow",Arial,sans-serif;font-size:32px;font-weight:1000;position:relative}.flip:after{content:"";position:absolute;left:0;right:0;top:50%;height:1px;background:#10213b47}.flip span{z-index:1}.tourPts{font-size:29px}
+.empty{padding:38px 20px;text-align:center;color:var(--ink);font-weight:900}
+.status{background:#000;color:#fff;display:flex;justify-content:space-between;gap:12px;padding:10px 14px;font-size:12px;font-weight:900}.status strong{color:#2bc3c8}.error{color:var(--orange)!important}
 .footer{background:var(--navy2);display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px;padding-bottom:calc(12px + env(safe-area-inset-bottom))}.footer a,.footer button{min-height:54px;border-radius:12px;border:2px solid var(--teal);background:transparent;color:#fff;font-size:16px;font-weight:900;display:flex;align-items:center;justify-content:center;text-decoration:none}.footer button{cursor:pointer}
-@media(max-width:390px){.head,.row{grid-template-columns:36px minmax(120px,1fr) 48px 55px 55px}.player{font-size:19px;gap:4px}.flag{font-size:19px}.flip{font-size:28px;margin:7px 3px}.titleBox,.timeBox{padding:12px 14px}}
+@media(max-width:430px){
+ .board{padding-left:5px;padding-right:5px}.groupHeads{grid-template-columns:34px 43px minmax(92px,1fr) 100px 96px}
+ .head,.row{grid-template-columns:34px 43px minmax(92px,1fr) 55px 45px 48px 48px}
+ .player{font-size:21px;padding:0 5px}.flagSvg{width:34px;height:23px}.pos,.tourPos{font-size:22px}.thru{font-size:16px}.flip{font-size:29px;margin:8px 3px}.tourPts{font-size:27px}.titleBox,.timeBox{padding:12px 14px}
+}
 </style>
 </head>
 <body>
@@ -49,9 +64,18 @@
   </nav>
 
   <main class="board">
+    <i class="screw s1"></i><i class="screw s2"></i><i class="screw s3"></i><i class="screw s4"></i>
     <div class="boardTitle">Spanish Golf Tour · Official Leaderboard</div>
+    <div class="groupHeads">
+      <div class="blank"></div>
+      <div class="roundGroup">THIS ROUND</div>
+      <div class="tourGroup">TOUR</div>
+    </div>
     <div class="boardFrame">
-      <div class="head"><div>POS</div><div>PLAYER</div><div>THRU</div><div>PTS</div><div>LAST</div></div>
+      <div class="head">
+        <div>POS</div><div>FLAG</div><div>PLAYER</div>
+        <div>POINTS</div><div>AFTER</div><div>POS</div><div>POINTS</div>
+      </div>
       <div id="rows"><div class="empty">Loading leaderboard…</div></div>
     </div>
   </main>
@@ -124,6 +148,7 @@ function showCachedLeaderboard(){
   const cached=loadCachedLeaderboard(currentRound);
   if(!cached) return false;
 
+  currentTourStandings={};
   renderRows(cached.data);
   document.getElementById('updated').textContent='LAST KNOWN';
   document.getElementById('updated').classList.remove('error');
@@ -157,22 +182,70 @@ function apiJsonp(params){
   });
 }
 
+function flagMarkup(player){
+  if(player==='PGB'||player==='STU'){
+    return `<svg class="flagSvg" viewBox="0 0 60 36" aria-label="England">
+      <rect width="60" height="36" fill="#fff"/><rect x="25" width="10" height="36" fill="#c8102e"/><rect y="13" width="60" height="10" fill="#c8102e"/>
+    </svg>`;
+  }
+  if(player==='DCM'){
+    return `<svg class="flagSvg" viewBox="0 0 60 36" aria-label="South Africa">
+      <rect width="60" height="18" fill="#de3831"/><rect y="18" width="60" height="18" fill="#002395"/>
+      <path d="M0 0 L28 18 L0 36Z" fill="#000"/><path d="M0 4 L22 18 L0 32" fill="none" stroke="#ffb612" stroke-width="7"/>
+      <path d="M0 7 L18 18 L0 29 M18 18 H60" fill="none" stroke="#fff" stroke-width="9"/>
+      <path d="M0 7 L18 18 L0 29 M18 18 H60" fill="none" stroke="#007a4d" stroke-width="5"/>
+    </svg>`;
+  }
+  if(player==='GEN'){
+    return `<svg class="flagSvg" viewBox="0 0 60 36" aria-label="Dominican Republic">
+      <rect width="60" height="36" fill="#fff"/><rect width="25" height="14" fill="#002d62"/><rect x="35" width="25" height="14" fill="#ce1126"/>
+      <rect y="22" width="25" height="14" fill="#ce1126"/><rect x="35" y="22" width="25" height="14" fill="#002d62"/>
+      <circle cx="30" cy="18" r="3" fill="#006847"/>
+    </svg>`;
+  }
+  return '';
+}
+
+function tourStandingsFrom(roundBoards){
+  const totals={PGB:0,DCM:0,STU:0,GEN:0};
+  roundBoards.forEach(board=>{
+    (Array.isArray(board)?board:[]).forEach(item=>{
+      if(Object.prototype.hasOwnProperty.call(totals,item.player)){
+        totals[item.player]+=Number(item.totalPoints)||0;
+      }
+    });
+  });
+  const ordered=Object.entries(totals).sort((a,b)=>b[1]-a[1] || a[0].localeCompare(b[0]));
+  let previous=null,position=0;
+  const result={};
+  ordered.forEach(([player,points],index)=>{
+    if(previous===null || points!==previous) position=index+1;
+    result[player]={position,points};
+    previous=points;
+  });
+  return result;
+}
+
+let currentTourStandings={};
 function renderRows(items){
   const host=document.getElementById('rows');
   if(!Array.isArray(items)||!items.length){
     host.innerHTML='<div class="empty">No leaderboard data yet.</div>';
     return;
   }
-  const flags={PGB:'🏴',STU:'🏴',DCM:'🇿🇦',GEN:'🇩🇴'};
-  host.innerHTML=items.map(item=>`
+  host.innerHTML=items.map(item=>{
+    const tour=currentTourStandings[item.player]||{position:'—',points:0};
+    return `
     <div class="row" data-player="${item.player}">
       <div class="pos">${item.position}</div>
-      <div class="player"><span class="flag">${flags[item.player]||'🏳️'}</span><span>${item.player}</span></div>
-      <div class="thru">${item.thru||'—'}</div>
+      <div class="flagCell">${flagMarkup(item.player)}</div>
+      <div class="player">${item.player}</div>
       <div class="flip pts"><span>${item.totalPoints}</span></div>
-      <div class="flip last"><span>${item.lastHolePoints===null?'—':item.lastHolePoints}</span></div>
-    </div>
-  `).join('');
+      <div class="thru">${item.thru||'—'}</div>
+      <div class="tourPos">${tour.position}</div>
+      <div class="flip tourPts"><span>${tour.points}</span></div>
+    </div>`;
+  }).join('');
 }
 
 function updateLinks(){
@@ -197,11 +270,18 @@ async function loadLeaderboard(){
   document.getElementById('updated').classList.remove('error');
 
   try{
-    const [leaderboard,roundPayload]=await Promise.all([
+    const tourRequests=[];
+    for(let r=1;r<=currentRound;r++){
+      tourRequests.push(apiJsonp({service:'scorecards',action:'leaderboard',round:r}));
+    }
+
+    const [leaderboard,roundPayload,tourBoards]=await Promise.all([
       apiJsonp({service:'scorecards',action:'leaderboard',round:currentRound}),
-      apiJsonp({service:'scorecards',action:'round',round:currentRound})
+      apiJsonp({service:'scorecards',action:'round',round:currentRound}),
+      Promise.all(tourRequests)
     ]);
 
+    currentTourStandings=tourStandingsFrom(tourBoards);
     renderRows(leaderboard);
     updateMeta(roundPayload.round);
     saveCachedLeaderboard(currentRound,leaderboard);
@@ -236,6 +316,6 @@ document.getElementById('roundSelect').value=String(currentRound);
 updateLinks();
 loadLeaderboard();
 </script>
-<!-- RyderCup2022.2: cached leaderboard + refresh-on-entry -->
+<!-- SGT26 Leaderboard V4: Open board + round/tour standings -->
 </body>
 </html>
