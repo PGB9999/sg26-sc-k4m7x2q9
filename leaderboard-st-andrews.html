@@ -670,15 +670,9 @@ document.getElementById('roundSelect').addEventListener('change',e=>{
 currentRound=queryRound();
 document.getElementById('roundSelect').value=String(currentRound);
 updateLinks();
+/* V2.5 — apartment mode: fetch latest scores once when the page opens/refreshed. */
 loadLeaderboard();
-
-/* V2.4 — unattended clubhouse mode: refresh live scores every 10 seconds. */
-window.setInterval(()=>{
-  if(document.visibilityState==='visible'){
-    loadLeaderboard();
-  }
-},10000);
 </script>
-<!-- SGT26 St Andrews Leaderboard V2.4: live refresh + bottom anchor -->
+<!-- SGT26 St Andrews Leaderboard V2.5: on-open refresh + bottom anchor -->
 </body>
 </html>
