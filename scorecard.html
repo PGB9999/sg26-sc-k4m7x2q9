@@ -497,14 +497,17 @@ button{font:inherit}
 /* RyderCup2022.5.1 — corrected compact four-player mode.
    Pairings mode is left exactly as in V2.4. */
 body.fourBallCompact{
-  --hole-h:92px;
-  --player-h:66px;
-  --nav-h:64px;
+  /* V1.1: compact, viewport-aware four-ball fit. */
+  --hole-h:clamp(80px,13.5dvh,88px);
+  --player-h:clamp(56px,9.4dvh,62px);
+  --nav-h:clamp(58px,9.8dvh,64px);
 }
 
 body.fourBallCompact .banner{
-  height:86px;
+  /* Match the proven Expenses banner treatment: show the complete 1200:346 artwork. */
   width:100%;
+  height:auto;
+  aspect-ratio:1200/346;
   object-fit:cover;
   object-position:center center;
 }
@@ -547,7 +550,7 @@ body.fourBallCompact .nav{
   padding-bottom:calc(3px + env(safe-area-inset-bottom));
 }
 body.fourBallCompact .nav button{
-  min-height:64px;
+  min-height:var(--nav-h);
 }
 .navQuick{display:grid;grid-template-columns:1fr 1fr;gap:5px}
 .navQuick .expensesLink{min-width:0;min-height:var(--nav-h);padding:5px 2px;font-size:10px;line-height:1.15;text-align:center}
@@ -843,7 +846,32 @@ body.fourBallCompact .player{
 }
 body.fourBallCompact .pts b,
 body.fourBallCompact .total b{
-  min-height:38px;
+  min-height:34px;
+}
+body.fourBallCompact .name{
+  font-size:22px;
+  line-height:1;
+}
+body.fourBallCompact .playerIdent{gap:5px}
+body.fourBallCompact .flagSvg{width:28px;height:18px}
+body.fourBallCompact .shots b,
+body.fourBallCompact .pts b,
+body.fourBallCompact .total b{font-size:23px}
+
+/* Short browser viewports (Chrome with its bars visible) get a final gentle squeeze. */
+@media(max-height:700px){
+  body.fourBallCompact{
+    --hole-h:80px;
+    --player-h:56px;
+    --nav-h:58px;
+  }
+  body.fourBallCompact .roundbar{min-height:52px}
+  body.fourBallCompact .roundbar>div{padding-top:5px;padding-bottom:4px}
+  body.fourBallCompact .golfToggle button,
+  body.fourBallCompact .golfToggle a{min-height:34px;padding:4px 8px}
+  body.fourBallCompact .stable{font-size:12px;padding:2px 8px}
+  body.fourBallCompact .head{min-height:22px}
+  body.fourBallCompact .status{min-height:22px;padding:2px 8px}
 }
 
 @media(max-width:390px){
@@ -852,13 +880,13 @@ body.fourBallCompact .total b{
 }
 </style>
 <script>
-  const APP_VERSION = "OpenBoardScorecard1.0";
-  console.info("SGT26 Scorecard Open Board", APP_VERSION);
+  const APP_VERSION = "OpenBoardScorecard1.1";
+  console.info("SGT26 Scorecard Open Board V1.1", APP_VERSION);
 </script>
 </head>
 <body>
 <div class="app">
-  <img class="banner" src="sgt26-banner.png?v=OpenBoardScorecard1.0" alt="Spanish Golf Tour 2026">
+  <img class="banner" src="sgt26-banner.png?v=OpenBoardScorecard1.1" alt="Spanish Golf Tour 2026">
   <div class="roundbar roundbarSimple">
     <div class="roundCourse">
       <span id="roundLabel">ROUND 1</span>
