@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- SGT26_BUILD:OpenBoardScorecard1.3 -->
+<!-- SGT26_BUILD:OpenBoardScorecard1.4 -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -1136,15 +1136,104 @@ body.fourBallCompact .big7::after{
     inset 0 0 0 1px rgba(255,255,255,.55),
     1px 2px 0 rgba(16,43,78,.35);
 }
+
+/* ============================================================
+   OpenBoardScorecard1.4 — final layout polish
+   1. HOLE uses the same label-above-tile structure as PAR/SI/YDS.
+   2. Gross-score controls move right to give player initials room.
+   3. NEXT HOLE stays on one line with its chevron.
+   ============================================================ */
+
+/* Undo the V1.3 pseudo-element HOLE reconstruction and make the real
+   #holeNo element itself the mechanical number tile. */
+body.fourBallCompact .big7{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  position:relative!important;
+  color:var(--boardInk)!important;
+  width:auto!important;
+  min-width:58px!important;
+  height:auto!important;
+  min-height:0!important;
+  margin:0!important;
+  padding:4px 5px!important;
+  border:2px solid rgba(16,33,59,.48)!important;
+  border-radius:2px!important;
+  background:linear-gradient(
+    #f5e9bd 0%,
+    #e8d69d 49%,
+    #d7be7d 50%,
+    #ebd9a2 100%
+  )!important;
+  box-shadow:
+    inset 0 0 0 2px rgba(255,255,255,.24),
+    0 2px 1px rgba(0,0,0,.16)!important;
+  transform:none!important;
+  font-family:Impact,Arial Black,sans-serif!important;
+  font-size:clamp(24px,4.3dvh,36px)!important;
+  font-weight:1000!important;
+  line-height:.9!important;
+}
+body.fourBallCompact .big7::before{
+  content:none!important;
+}
+body.fourBallCompact .big7::after{
+  content:""!important;
+  position:absolute!important;
+  left:0!important;
+  right:0!important;
+  top:50%!important;
+  height:1px!important;
+  min-width:0!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:rgba(16,33,59,.27)!important;
+  box-shadow:none!important;
+  pointer-events:none!important;
+}
+
+/* The first hole-board cell now behaves exactly like the other metric cells. */
+body.fourBallCompact .holeNum.metric{
+  border-left:0;
+}
+
+/* Give the player ID a little more breathing room and start the scoring
+   controls slightly farther right without changing the five-column logic. */
+body.fourBallCompact .head,
+body.fourBallCompact .player{
+  grid-template-columns:19% 35% 15% 14% 17%;
+}
+body.fourBallCompact .player{
+  padding-left:7px;
+  padding-right:5px;
+}
+body.fourBallCompact .name{
+  white-space:nowrap;
+}
+body.fourBallCompact .controls{
+  margin-left:5px;
+}
+
+/* Keep NEXT HOLE and the chevron together. */
+body.fourBallCompact .nav .next{
+  font-size:clamp(18px,2.6dvh,21px);
+  letter-spacing:0;
+  white-space:nowrap;
+  padding-left:3px;
+  padding-right:3px;
+}
+
 </style>
 <script>
-  const APP_VERSION = "OpenBoardScorecard1.3";
-  console.info("SGT26 Scorecard Open Board V1.1", APP_VERSION);
+  const APP_VERSION = "OpenBoardScorecard1.4";
+  console.info("SGT26 Scorecard Open Board V1.4", APP_VERSION);
 </script>
 </head>
 <body>
 <div class="app">
-  <img class="banner" src="sgt26-banner.png?v=OpenBoardScorecard1.3" alt="Spanish Golf Tour 2026">
+  <img class="banner" src="sgt26-banner.png?v=OpenBoardScorecard1.4" alt="Spanish Golf Tour 2026">
   <div class="roundbar roundbarSimple">
     <div class="roundCourse">
       <span id="roundLabel">ROUND 1</span>
@@ -1178,7 +1267,7 @@ body.fourBallCompact .big7::after{
 
   <section class="hole">
     <div class="holegrid">
-      <div class="big7" id="holeNo">1</div>
+      <div class="metric holeNum"><small>HOLE</small><b class="big7" id="holeNo">1</b></div>
       <div class="metric"><small>PAR</small><b id="par">4</b></div>
       <div class="metric si"><small>SI</small><b id="si">11</b></div>
       <div class="metric yds"><small>YDS</small><b id="yards">—</b></div>
@@ -1742,23 +1831,6 @@ loadRoundData()
     setSaveStatus('LOCAL ONLY',true);
   });
 // RyderCup2022.5.1 corrected compact four-player layout enabled
-</script>
-<script>
-/* V1.3 presentation-only mirror for the HOLE mechanical tile. */
-(function(){
-  function bindHoleTile(){
-    const el=document.querySelector(".big7");
-    if(!el) return;
-    const sync=()=>el.setAttribute("data-hole",(el.textContent||"").trim());
-    sync();
-    new MutationObserver(sync).observe(el,{childList:true,characterData:true,subtree:true});
-  }
-  if(document.readyState==="loading"){
-    document.addEventListener("DOMContentLoaded",bindHoleTile,{once:true});
-  }else{
-    bindHoleTile();
-  }
-})();
 </script>
 
 </body>
