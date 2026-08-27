@@ -644,6 +644,10 @@ galleryInput.addEventListener('change',async()=>{
       'ok'
     );
 
+    // Swap temporary local previews for the real Drive records.
+    // The Drive records contain the file ID required by the Bin action.
+    loadDriveGallery();
+
   }catch(error){
     setStatus(
       'Upload failed: ' + (error.message || error),
