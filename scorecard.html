@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- SGT26_BUILD:OpenBoardScorecard1.2 -->
+<!-- SGT26_BUILD:OpenBoardScorecard1.3 -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -1074,15 +1074,77 @@ body.fourBallCompact .navQuick .expensesLink{
     justify-content:flex-start;
   }
 }
+
+/* V1.3 — final hole-tile alignment tweak.
+   Make HOLE match PAR / SI / YDS: label above the mechanical tile,
+   with the hole number using the same visual scale as the metrics. */
+body.fourBallCompact .holeNum{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:4px 6px;
+}
+body.fourBallCompact .big7{
+  width:auto!important;
+  min-width:0!important;
+  height:auto!important;
+  min-height:0!important;
+  padding:0!important;
+  border:0!important;
+  box-shadow:none!important;
+  background:none!important;
+  transform:none!important;
+  font-size:inherit!important;
+  line-height:1!important;
+}
+body.fourBallCompact .big7::before{
+  content:"HOLE";
+  position:static!important;
+  display:block;
+  transform:none!important;
+  margin:0 0 4px;
+  font-size:10px!important;
+  line-height:1!important;
+  font-weight:1000;
+  letter-spacing:.35px;
+  color:#102b4e;
+}
+body.fourBallCompact .big7{
+  color:transparent!important;
+}
+body.fourBallCompact .big7::after{
+  content:attr(data-hole);
+  display:block;
+  color:#102b4e;
+  font-size:clamp(24px,4.3dvh,36px);
+  line-height:1;
+  font-weight:1000;
+  min-width:58px;
+  padding:4px 5px;
+  text-align:center;
+  border:2px solid rgba(16,43,78,.35);
+  border-radius:3px;
+  background:
+    linear-gradient(to bottom,
+      #fff7d8 0%,
+      #f7e7af 49%,
+      #c7b57d 50%,
+      #f4dfa2 51%,
+      #f8e8b6 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.55),
+    1px 2px 0 rgba(16,43,78,.35);
+}
 </style>
 <script>
-  const APP_VERSION = "OpenBoardScorecard1.2";
+  const APP_VERSION = "OpenBoardScorecard1.3";
   console.info("SGT26 Scorecard Open Board V1.1", APP_VERSION);
 </script>
 </head>
 <body>
 <div class="app">
-  <img class="banner" src="sgt26-banner.png?v=OpenBoardScorecard1.2" alt="Spanish Golf Tour 2026">
+  <img class="banner" src="sgt26-banner.png?v=OpenBoardScorecard1.3" alt="Spanish Golf Tour 2026">
   <div class="roundbar roundbarSimple">
     <div class="roundCourse">
       <span id="roundLabel">ROUND 1</span>
@@ -1681,6 +1743,24 @@ loadRoundData()
   });
 // RyderCup2022.5.1 corrected compact four-player layout enabled
 </script>
+<script>
+/* V1.3 presentation-only mirror for the HOLE mechanical tile. */
+(function(){
+  function bindHoleTile(){
+    const el=document.querySelector(".big7");
+    if(!el) return;
+    const sync=()=>el.setAttribute("data-hole",(el.textContent||"").trim());
+    sync();
+    new MutationObserver(sync).observe(el,{childList:true,characterData:true,subtree:true});
+  }
+  if(document.readyState==="loading"){
+    document.addEventListener("DOMContentLoaded",bindHoleTile,{once:true});
+  }else{
+    bindHoleTile();
+  }
+})();
+</script>
+
 </body>
 </html>
 <!-- RyderCup2022.1 leaderboard toggle enabled -->
