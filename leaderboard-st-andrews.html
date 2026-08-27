@@ -38,7 +38,7 @@ html,body{
 .board{
   position:absolute;
   left:3.5%;
-  top:47.0%;
+  bottom:0;
   width:58.5%;
   height:46.5%;
   display:flex;
@@ -268,7 +268,7 @@ html,body{
 .status{
   position:absolute;
   left:3.9%;
-  bottom:2.0%;
+  bottom:.7%;
   right:auto;
   z-index:4;
   display:flex;
@@ -385,10 +385,7 @@ html,body{
   margin-top:1px;
 }
 @media(max-height:850px){
-  .board{
-    top:46%;
-    height:47%;
-  }
+  .board{height:47%;}
 }
 </style>
 </head>
@@ -501,7 +498,7 @@ function showCachedLeaderboard(){
   renderRows(cached.data);
   document.getElementById('updated').textContent='LAST KNOWN';
   document.getElementById('updated').classList.remove('error');
-  document.getElementById('freshness').textContent=formatFreshness(cached.savedAt);
+  document.getElementById('updatedTime').textContent=formatFreshness(cached.savedAt);
   return true;
 }
 
@@ -613,7 +610,10 @@ function updateMeta(roundData){
   document.getElementById('teeTime').textContent=String(roundData.teeTime||'TBD').toUpperCase();
 }
 
+let leaderboardLoadInProgress=false;
 async function loadLeaderboard(){
+  if(leaderboardLoadInProgress) return;
+  leaderboardLoadInProgress=true;
   const host=document.getElementById('rows');
   const hadCache=showCachedLeaderboard();
 
@@ -654,6 +654,8 @@ async function loadLeaderboard(){
       document.getElementById('updated').classList.add('error');
       document.getElementById('updatedTime').textContent='NO CACHED DATA';
     }
+  }finally{
+    leaderboardLoadInProgress=false;
   }
 }
 
@@ -669,7 +671,14 @@ currentRound=queryRound();
 document.getElementById('roundSelect').value=String(currentRound);
 updateLinks();
 loadLeaderboard();
+
+/* V2.4 — unattended clubhouse mode: refresh live scores every 10 seconds. */
+window.setInterval(()=>{
+  if(document.visibilityState==='visible'){
+    loadLeaderboard();
+  }
+},10000);
 </script>
-<!-- SGT26 St Andrews Leaderboard V2.3: final lower-left alignment pass -->
+<!-- SGT26 St Andrews Leaderboard V2.4: live refresh + bottom anchor -->
 </body>
 </html>
