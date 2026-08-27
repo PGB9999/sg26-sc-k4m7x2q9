@@ -153,6 +153,16 @@ button{font:inherit}
 }
 .lightbox.open{display:flex}
 .lightbox img{max-width:100%;max-height:82vh;object-fit:contain}
+.lightboxNav{
+  position:absolute;top:50%;transform:translateY(-50%);z-index:3;
+  width:48px;height:64px;border:1px solid rgba(255,255,255,.35);
+  border-radius:24px;background:rgba(0,0,0,.38);color:white;
+  font-size:42px;line-height:1;display:flex;align-items:center;justify-content:center;
+  user-select:none;-webkit-user-select:none
+}
+.lightboxPrev{left:10px}
+.lightboxNext{right:10px}
+.lightboxNav[hidden]{display:none}
 .lightboxTrash{
   position:absolute;top:14px;right:68px;z-index:3;width:46px;height:46px;
   border:1px solid rgba(255,255,255,.45);border-radius:50%;
@@ -306,6 +316,14 @@ const lightboxCaption = document.getElementById('lightboxCaption');
 const lightboxTrash = document.getElementById('lightboxTrash');
 let openPhotoId = '';
 let openPhotoPhotographer = '';
+const lightboxPrev = document.getElementById('lightboxPrev');
+const lightboxNext = document.getElementById('lightboxNext');
+let lightboxTiles = [];
+let lightboxIndex = -1;
+let lightboxScrollY = 0;
+let lightboxHistoryPushed = false;
+let touchStartX = 0;
+let touchStartY = 0;
 
 let photographer = '';
 let pendingCameraFile = null;
@@ -758,9 +776,18 @@ function loadDriveGallery(){
     });
 }
 
-gallery.addEventListener('click',event=>{
-  const tile = event.target.closest('.tile');
-  if(!tile || !tile.dataset.url) return;
+function currentVisibleTiles(){
+  return Array.from(gallery.querySelectorAll('.tile'))
+    .filter(tile => tile.style.display !== 'none' && tile.dataset.url);
+}
+
+function showLightboxIndex(index){
+  if(!lightboxTiles.length) return;
+
+  lightboxIndex =
+    (index + lightboxTiles.length) % lightboxTiles.length;
+
+  const tile = lightboxTiles[lightboxIndex];
 
   lightboxImg.src = tile.dataset.url;
   lightboxCaption.textContent = tile.dataset.caption || '';
@@ -768,16 +795,62 @@ gallery.addEventListener('click',event=>{
   openPhotoPhotographer = tile.dataset.photographer || '';
 
   lightboxTrash.hidden =
-    !openPhotoId || !photographer || openPhotoPhotographer !== photographer;
+    !openPhotoId ||
+    !photographer ||
+    openPhotoPhotographer !== photographer;
+
+  const many = lightboxTiles.length > 1;
+  lightboxPrev.hidden = !many;
+  lightboxNext.hidden = !many;
+}
+
+function openLightbox(tile){
+  lightboxTiles = currentVisibleTiles();
+  lightboxIndex = lightboxTiles.indexOf(tile);
+  if(lightboxIndex < 0) return;
+
+  lightboxScrollY = window.scrollY;
+  showLightboxIndex(lightboxIndex);
 
   lightbox.classList.add('open');
   lightbox.setAttribute('aria-hidden','false');
+
+  // Give the full-screen viewer its own browser-history step.
+  // Android Back then closes the viewer instead of leaving Photos.
+  if(!lightboxHistoryPushed){
+    history.pushState({sgt26PhotoViewer:true},'',location.href);
+    lightboxHistoryPushed = true;
+  }
+}
+
+gallery.addEventListener('click',event=>{
+  const tile = event.target.closest('.tile');
+  if(!tile || !tile.dataset.url) return;
+  openLightbox(tile);
 });
 
-function closeLightbox(){
+function closeLightbox(fromPopState=false){
+  if(!lightbox.classList.contains('open')) return;
+
   lightbox.classList.remove('open');
   lightbox.setAttribute('aria-hidden','true');
   lightboxImg.removeAttribute('src');
+  openPhotoId = '';
+  openPhotoPhotographer = '';
+  lightboxTrash.hidden = true;
+  lightboxPrev.hidden = true;
+  lightboxNext.hidden = true;
+
+  requestAnimationFrame(()=>{
+    window.scrollTo(0,lightboxScrollY);
+  });
+
+  if(lightboxHistoryPushed){
+    lightboxHistoryPushed = false;
+    if(!fromPopState){
+      history.back();
+    }
+  }
 }
 
 
@@ -827,7 +900,7 @@ async function binOpenPhoto(){
   lightboxTrash.disabled=true;
   try{
     await apiJsonpPhotos({service:'photos',action:'trash',id:openPhotoId,photographer:photographer});
-    closeLightbox();
+    closeLightbox(false);
     setStatus('✓ Photo moved to Drive Bin.','ok');
     loadDriveGallery();
   }catch(error){
@@ -838,7 +911,55 @@ async function binOpenPhoto(){
 }
 lightboxTrash.addEventListener('click',binOpenPhoto);
 
-document.getElementById('lightboxClose').addEventListener('click',closeLightbox);
+
+function previousLightboxPhoto(){
+  showLightboxIndex(lightboxIndex - 1);
+}
+
+function nextLightboxPhoto(){
+  showLightboxIndex(lightboxIndex + 1);
+}
+
+lightboxPrev.addEventListener('click',event=>{
+  event.stopPropagation();
+  previousLightboxPhoto();
+});
+
+lightboxNext.addEventListener('click',event=>{
+  event.stopPropagation();
+  nextLightboxPhoto();
+});
+
+lightbox.addEventListener('touchstart',event=>{
+  if(event.touches.length !== 1) return;
+  touchStartX = event.touches[0].clientX;
+  touchStartY = event.touches[0].clientY;
+},{passive:true});
+
+lightbox.addEventListener('touchend',event=>{
+  if(!touchStartX || !event.changedTouches.length) return;
+
+  const dx = event.changedTouches[0].clientX - touchStartX;
+  const dy = event.changedTouches[0].clientY - touchStartY;
+
+  touchStartX = 0;
+  touchStartY = 0;
+
+  // Horizontal deliberate swipe; ignore mostly vertical gestures.
+  if(Math.abs(dx) < 55 || Math.abs(dx) <= Math.abs(dy)) return;
+
+  if(dx < 0) nextLightboxPhoto();
+  else previousLightboxPhoto();
+},{passive:true});
+
+window.addEventListener('popstate',()=>{
+  if(lightbox.classList.contains('open')){
+    lightboxHistoryPushed = false;
+    closeLightbox(true);
+  }
+});
+
+document.getElementById('lightboxClose').addEventListener('click',()=>closeLightbox(false));
 
 lightbox.addEventListener('click',event=>{
   if(event.target === lightbox) closeLightbox();
