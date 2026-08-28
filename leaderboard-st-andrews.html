@@ -387,6 +387,31 @@ html,body{
 @media(max-height:850px){
   .board{height:47%;}
 }
+
+/* V2.6 — slightly smaller typography + mobile-style white flip cards */
+.playerName{font-size:clamp(25px,3.85vh,52px);line-height:.92;letter-spacing:0}
+.playerCode{font-size:clamp(8px,.72vw,12px);margin-top:2px}
+.pos,.tourPos,.thru{font-size:clamp(21px,3.15vh,42px)}
+.flip{
+  width:76%;height:68%;min-height:54px;
+  border:3px solid #172238!important;border-radius:4px;
+  background:linear-gradient(to bottom,#fff 0%,#f8f8f6 48.5%,#d9d9d6 49%,#ececea 51%,#fff 100%);
+  color:#111b2d;
+  font-size:clamp(28px,4.25vh,56px);
+  letter-spacing:-1px;
+  box-shadow:inset 0 0 0 2px rgba(255,255,255,.8),0 2px 3px rgba(0,0,0,.28);
+}
+.flip:before{
+  content:"";position:absolute;left:3px;right:3px;top:50%;height:1px;
+  background:rgba(17,27,45,.32);z-index:3
+}
+.flip:after{
+  content:"";position:absolute;left:0;right:0;top:50%;height:4px;transform:translateY(-2px);
+  background:linear-gradient(to bottom,rgba(0,0,0,.18),rgba(255,255,255,.75) 48%,rgba(0,0,0,.10) 52%,transparent);
+  box-shadow:none
+}
+.flip span{position:relative;z-index:4}
+.tourPts{font-size:clamp(27px,4.05vh,53px)}
 </style>
 </head>
 <body>
@@ -673,6 +698,6 @@ updateLinks();
 /* V2.5 — apartment mode: fetch latest scores once when the page opens/refreshed. */
 loadLeaderboard();
 </script>
-<!-- SGT26 St Andrews Leaderboard V2.5: on-open refresh + bottom anchor -->
+<!-- SGT26 St Andrews Leaderboard V2.6: compact white flip-board styling -->
 </body>
 </html>
