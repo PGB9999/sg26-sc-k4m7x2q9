@@ -467,7 +467,8 @@ const API_URL="https://script.google.com/macros/s/AKfycbz06cod2GzirOUT7HCyMLgzF9
 let currentRound=1;
 function queryRound(){
   const q=new URLSearchParams(location.search);
-  const n=Number(q.get('round')||1);
+  if(!q.has('round')) return null;
+  const n=Number(q.get('round'));
   return Number.isInteger(n)&&n>=1&&n<=6?n:1;
 }
 
@@ -525,6 +526,20 @@ function showCachedLeaderboard(){
   document.getElementById('updated').classList.remove('error');
   document.getElementById('updatedTime').textContent=formatFreshness(cached.savedAt);
   return true;
+}
+
+async function latestRoundWithScores(){
+  for(let round=6;round>=1;round--){
+    try{
+      const scores=await apiJsonp({service:'scorecards',action:'scores',round});
+      if(Array.isArray(scores) && scores.some(score=>Number(score.gross)>0)){
+        return round;
+      }
+    }catch(error){
+      console.warn(`Unable to check Round ${round} scores:`,error);
+    }
+  }
+  return 1;
 }
 
 function apiJsonp(params){
@@ -692,12 +707,23 @@ document.getElementById('roundSelect').addEventListener('change',e=>{
 });
 
 
-currentRound=queryRound();
-document.getElementById('roundSelect').value=String(currentRound);
-updateLinks();
-/* V2.5 — apartment mode: fetch latest scores once when the page opens/refreshed. */
-loadLeaderboard();
+async function initialiseLeaderboard(){
+  const requestedRound=queryRound();
+
+  currentRound=requestedRound || await latestRoundWithScores();
+
+  document.getElementById('roundSelect').value=String(currentRound);
+  updateLinks();
+
+  if(!requestedRound){
+    history.replaceState(null,'',`leaderboard-st-andrews.html?round=${currentRound}`);
+  }
+
+  loadLeaderboard();
+}
+
+initialiseLeaderboard();
 </script>
-<!-- SGT26 St Andrews Leaderboard V2.6: compact white flip-board styling -->
+<!-- SGT26 St Andrews Leaderboard V2.7: auto-open latest round with scores -->
 </body>
 </html>
